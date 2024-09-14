@@ -146,3 +146,4 @@ C:\Users\JulianPz\source\repos\ApiSpaDemo\ApiSpaDemo\bin\Debug\net8.0\Microsoft.
 C:\Users\JulianPz\source\repos\ApiSpaDemo\ApiSpaDemo\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
 C:\Users\JulianPz\source\repos\ApiSpaDemo\ApiSpaDemo\bin\Debug\net8.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
 C:\Users\JulianPz\source\repos\ApiSpaDemo\ApiSpaDemo\bin\Debug\net8.0\Newtonsoft.Json.Bson.dll
+C:\Users\JulianPz\source\repos\ApiSpaDemo\ApiSpaDemo\obj\Debug\net8.0\ApiSpaDemo.sourcelink.json

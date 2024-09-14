@@ -21,7 +21,7 @@ namespace ApiSpaDemo
 
             builder.Services.AddCors(opt =>
             {
-                opt.AddPolicy("PermitirTodo", builder => {builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                opt.AddPolicy("PermitirTodo", builder => { builder.WithOrigins("http://127.0.0.1:5500", "http://www.ApiSpaDemo.somee.com").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
                 });
             });
 
@@ -38,6 +38,13 @@ namespace ApiSpaDemo
                             return Task.CompletedTask;
                         }
                     };
+                    options.Cookie.HttpOnly = true; // Asegúrate de que las cookies sean accesibles solo por el servidor
+                    options.Cookie.SameSite = SameSiteMode.None; // Permite cookies en solicitudes cross-site
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Asegúrate de que las cookies solo se envíen a través de HTTPS
+                                                                             //
+                                                                             //
+                    ;
+
                 });
 
             builder.Services.ConfigureApplicationCookie(options =>

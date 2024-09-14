@@ -7,21 +7,21 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
     <TimeStampOfAssociatedLegacyPublishXmlFile />
     <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAk2+B1R+ErEm9K1o4XeXA9QAAAAACAAAAAAAQZgAAAAEAACAAAAD8+4/+KdypwWcwvvgvs7fwUoJHl7mQKq79n5xqBSaVkQAAAAAOgAAAAAIAACAAAAA2s23dVI0A6fUiYAIzvUPi7qY6D7tMaDaf9su529mEyyAAAAArLl4lJO/kOKYw7Fw50FW0+B42sdmggHYWXoKm28nbNkAAAADX34fBnuUcwdsa9FghDl4Sq7K/Jef7gJ6DmHKyqhrzzIwUje/ikaJ7VeP3Oeo0CHjiiAHHXl7oWlFDVf1y+9sh</EncryptedPassword>
     <_PublishTargetUrl>ftp://155.254.244.37/www.ApiSpaDemo.somee.com</_PublishTargetUrl>
-    <History>True|2024-09-12T17:17:01.3992423Z||;True|2024-09-12T13:41:38.6921951-03:00||;True|2024-09-12T13:27:13.6975045-03:00||;True|2024-09-12T12:11:01.1655995-03:00||;True|2024-09-08T00:47:12.2947228-03:00||;True|2024-09-07T21:42:01.8181384-03:00||;True|2024-09-07T17:32:37.4692006-03:00||;False|2024-09-07T17:30:20.7657030-03:00||;True|2024-09-07T17:28:00.4323617-03:00||;</History>
+    <History>True|2024-09-14T17:18:35.6181351Z||;True|2024-09-14T00:07:07.6653024-03:00||;False|2024-09-14T00:02:42.2172356-03:00||;False|2024-09-14T00:02:39.5948553-03:00||;True|2024-09-14T00:00:40.4076253-03:00||;True|2024-09-13T23:16:17.9616304-03:00||;False|2024-09-13T23:12:35.3694051-03:00||;True|2024-09-12T14:17:01.3992423-03:00||;True|2024-09-12T13:41:38.6921951-03:00||;True|2024-09-12T13:27:13.6975045-03:00||;True|2024-09-12T12:11:01.1655995-03:00||;True|2024-09-08T00:47:12.2947228-03:00||;True|2024-09-07T21:42:01.8181384-03:00||;True|2024-09-07T17:32:37.4692006-03:00||;False|2024-09-07T17:30:20.7657030-03:00||;True|2024-09-07T17:28:00.4323617-03:00||;</History>
     <LastFailureDetails />
   </PropertyGroup>
   <ItemGroup>
     <File Include="ApiSpaDemo.deps.json">
-      <publishTime>09/12/2024 14:13:08</publishTime>
+      <publishTime>09/14/2024 14:14:42</publishTime>
     </File>
     <File Include="ApiSpaDemo.dll">
-      <publishTime>09/12/2024 14:13:08</publishTime>
+      <publishTime>09/14/2024 14:14:41</publishTime>
     </File>
     <File Include="ApiSpaDemo.exe">
-      <publishTime>09/12/2024 14:13:08</publishTime>
+      <publishTime>09/14/2024 14:14:41</publishTime>
     </File>
     <File Include="ApiSpaDemo.pdb">
-      <publishTime>09/12/2024 14:13:08</publishTime>
+      <publishTime>09/14/2024 14:14:41</publishTime>
     </File>
     <File Include="ApiSpaDemo.runtimeconfig.json">
       <publishTime>09/12/2024 12:06:55</publishTime>
@@ -195,7 +195,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>10/22/2021 20:49:44</publishTime>
     </File>
     <File Include="web.config">
-      <publishTime>09/12/2024 14:13:08</publishTime>
+      <publishTime>09/14/2024 14:14:42</publishTime>
     </File>
   </ItemGroup>
 </Project>

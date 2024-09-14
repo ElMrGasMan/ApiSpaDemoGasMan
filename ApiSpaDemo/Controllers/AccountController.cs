@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApiSpaDemo.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace ApiSpaDemo.Controllers
 {
@@ -17,34 +20,43 @@ namespace ApiSpaDemo.Controllers
     {
         private readonly UserManager<Usuario> _userManager;
         private readonly SignInManager<Usuario> _signInManager;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager)
+        public AccountController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _logger = logger;
+            _logger = logger;
         }
         [EnableCors("PermitirTodo")]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var user = new Usuario
+            try
             {
-                UserName = model.Username,
-                Email = model.Email
-            };
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-            var result = await _userManager.CreateAsync(user, model.Password);
+                var user = new Usuario
+                {
+                    UserName = model.Username,
+                    Email = model.Email
+                };
 
-            if (!result.Succeeded)
-                return BadRequest(result.Errors);
+                var result = await _userManager.CreateAsync(user, model.Password);
 
-            // Asignar rol cliente primero
-            await _userManager.AddToRoleAsync(user, "Cliente");
+                if (!result.Succeeded)
+                    return BadRequest(result.Errors);
 
-            return Ok("User registered successfully.");
+                // Asignar rol cliente primero
+                await _userManager.AddToRoleAsync(user, "Cliente");
+
+                return Ok("User registered successfully.");
+            }catch (Exception ex) {
+                _logger.LogError(ex, "Error en el registro de usuario");
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
         }
         [EnableCors("PermitirTodo")]
         [HttpPost("login")]
@@ -66,7 +78,13 @@ namespace ApiSpaDemo.Controllers
             {
                 // Aquí puedes manejar la creación manual de la cookie de autenticación si es necesario
                 await _signInManager.SignInAsync(user, isPersistent: false);
-                return Ok("Login successful.");
+
+                return Ok(new { 
+                    message = "Login successful.",
+                    userName = user.UserName, 
+                    email = user.Email, 
+                    idUser = user.Id,
+                });
             }
 
             if (result.IsLockedOut)
@@ -81,8 +99,21 @@ namespace ApiSpaDemo.Controllers
         [Authorize]
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
-            return Ok("Logout successful.");
+
+            try
+            {
+                // Esto cerrará la sesión del usuario y eliminará las cookies de autenticación
+                await _signInManager.SignOutAsync();
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+                return Ok("Logout successful.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error en el logout");
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
         }
+
     }
 }
