@@ -10,9 +10,6 @@ namespace ApiSpaDemo.Models.DTO
 
         [Required]
         public string? UsuarioId { get; set; }
-        [Required]
-        [ForeignKey("UsuarioId")]
-        public Usuario? UsuarioClass { get; set; }
 
         [Required]
         [MaxLength(50, ErrorMessage="El nombre del tipo no puede exceder 50 caracteres.")]

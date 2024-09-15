@@ -10,9 +10,6 @@ namespace ApiSpaDemo.Models.DTO
 
         [Required]
         public int ServicioId { get; set; }
-        [Required]
-        [ForeignKey("ServicioId")]
-        public Servicio? ServicioClass { get; set; }
 
         [Required]
         public ICollection<Usuario> Usuarios { get; set; } = [];

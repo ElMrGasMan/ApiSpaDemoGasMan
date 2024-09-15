@@ -36,11 +36,22 @@ namespace ApiSpaDemo.Controllers
             return respuestaDTO;
         }
 
+
+        // GET: api/Respuesta/getRespPorPreg
+        [HttpGet("getRespPorPreg")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<RespuestaDTO>> GetRespuestaDePreg(int pregId)
+        {
+            var respuesta = await _context.Respuesta.FirstOrDefaultAsync(r => r.PreguntaId == pregId);
+            var respuestaDTO = _mapper.Map<RespuestaDTO>(respuesta);
+            return respuestaDTO;
+        }
+
         // Limited GET: api/Respuesta/limitado
         [HttpGet("limitado")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<IEnumerable<RespuestaDTO>>> GetLimitedRespuestas([FromQuery] int count = 10)
+        public async Task<ActionResult<IEnumerable<RespuestaDTO>>> GetLimitedRespuestas(int count = 10)
         {
             if (count <= 0)
             {

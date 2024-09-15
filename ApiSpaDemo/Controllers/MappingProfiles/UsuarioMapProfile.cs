@@ -13,6 +13,7 @@ namespace ApiSpaDemo.Controllers.MappingProfiles
         public UsuarioMapProfile()
         {
             CreateMap<Usuario, UsuarioDTO>().ReverseMap();
+            CreateMap<Usuario, UsuarioDTOwID>().ReverseMap();
         }
     }
 }

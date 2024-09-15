@@ -41,7 +41,6 @@ namespace ApiSpaDemo.Controllers
             return Ok(usuarioDto);
         }
 
-
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet("currentuserdata")]
         public async Task<ActionResult<UsuarioDTO>> GetUsuario()
@@ -55,6 +54,16 @@ namespace ApiSpaDemo.Controllers
                 Email = email
             };
             return Ok(usuarioDto);
+        }
+
+        //Solo para testing, obtener todos los usuarios.
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpGet("getAllUsers")]
+        public async Task<ActionResult<IEnumerable<UsuarioDTOwID>>> GetAllUsuarios()
+        {
+            var usuarios = await _context.Users.ToListAsync();
+            var usuarioDTOs = _mapper.Map<List<UsuarioDTOwID>>(usuarios);
+            return usuarioDTOs;
         }
     }
 }

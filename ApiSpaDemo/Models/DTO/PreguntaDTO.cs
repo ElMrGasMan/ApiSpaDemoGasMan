@@ -10,9 +10,6 @@ namespace ApiSpaDemo.Models.DTO
         
         [Required]
         public string? UsuarioId { get; set; }
-        [Required]
-        [ForeignKey("UsuarioId")]
-        public Usuario? UsuarioClass { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
