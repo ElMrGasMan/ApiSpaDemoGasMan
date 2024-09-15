@@ -3,6 +3,7 @@ using AutoMapper;
 using ApiSpaDemo.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using ApiSpaDemo.Services;
 
 namespace ApiSpaDemo
 {
@@ -27,6 +28,10 @@ namespace ApiSpaDemo
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+            //Email Service
+            builder.Services.Configure<SMTPSettingsModel>(builder.Configuration.GetSection("SmtpSettings"));
+            builder.Services.AddTransient<EmailService>();
+
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
@@ -38,9 +43,9 @@ namespace ApiSpaDemo
                             return Task.CompletedTask;
                         }
                     };
-                    options.Cookie.HttpOnly = true; // Asegúrate de que las cookies sean accesibles solo por el servidor
+                    options.Cookie.HttpOnly = true; // Asegï¿½rate de que las cookies sean accesibles solo por el servidor
                     options.Cookie.SameSite = SameSiteMode.None; // Permite cookies en solicitudes cross-site
-                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Asegúrate de que las cookies solo se envíen a través de HTTPS
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Asegï¿½rate de que las cookies solo se envï¿½en a travï¿½s de HTTPS
                                                                              //
                                                                              //
                     ;
