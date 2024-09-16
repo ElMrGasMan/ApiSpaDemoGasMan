@@ -114,6 +114,5 @@ namespace ApiSpaDemo.Controllers
                 return StatusCode(500, new { message = "Internal server error", error = ex.Message });
             }
         }
-
     }
 }

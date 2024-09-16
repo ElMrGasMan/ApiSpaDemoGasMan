@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using ApiSpaDemo.Models.DTO.PatchDTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
+using System.Security.Claims;
 
 namespace ApiSpaDemo.Controllers
 {
@@ -166,12 +167,14 @@ namespace ApiSpaDemo.Controllers
             {
                 return BadRequest();
             }
-            var resenia = _mapper.Map<Resenia>(reseniaDTO);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            reseniaDTO.UsuarioId = userId;
 
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            var resenia = _mapper.Map<Resenia>(reseniaDTO);
 
             _context.Resenia.Add(resenia);
             await _context.SaveChangesAsync();

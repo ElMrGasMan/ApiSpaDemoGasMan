@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.JsonPatch;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
+using System.Security.Claims;
 
 namespace ApiSpaDemo.Controllers
 {
@@ -178,12 +179,14 @@ namespace ApiSpaDemo.Controllers
             {
                 return BadRequest();
             }
-            var respuesta = _mapper.Map<Respuesta>(respuestaDTO);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            respuestaDTO.UsuarioId = userId;
 
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            var respuesta = _mapper.Map<Respuesta>(respuestaDTO);
 
             _context.Respuesta.Add(respuesta);
             await _context.SaveChangesAsync();

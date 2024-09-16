@@ -7,8 +7,6 @@ namespace ApiSpaDemo.Models.DTO
     {
         [Key]
         public int PreguntaId { get; set; }
-        
-        [Required]
         public string? UsuarioId { get; set; }
 
         [Required]

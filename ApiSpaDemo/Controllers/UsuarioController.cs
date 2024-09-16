@@ -43,13 +43,15 @@ namespace ApiSpaDemo.Controllers
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet("currentuserdata")]
-        public async Task<ActionResult<UsuarioDTO>> GetUsuario()
+        public async Task<ActionResult<UsuarioDTOwID>> GetUsuario()
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var userName = User.FindFirst(ClaimTypes.Name)?.Value;
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
 
-            var usuarioDto = new UsuarioDTO
+            var usuarioDto = new UsuarioDTOwID
             {
+                Id = userId,
                 UserName = userName,
                 Email = email
             };

@@ -6,6 +6,7 @@ using ApiSpaDemo.Models.DTO;
 using Microsoft.AspNetCore.JsonPatch;
 using ApiSpaDemo.Models.DTO.PatchDTOs;
 using Microsoft.AspNetCore.Cors;
+using System.Security.Claims;
 
 namespace ApiSpaDemo.Controllers
 {
@@ -161,12 +162,15 @@ namespace ApiSpaDemo.Controllers
             {
                 return BadRequest();
             }
-            var pregunta = _mapper.Map<Pregunta>(preguntaDTO);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            preguntaDTO.UsuarioId = userId;
 
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            
+            var pregunta = _mapper.Map<Pregunta>(preguntaDTO);
 
             _context.Pregunta.Add(pregunta);
             await _context.SaveChangesAsync();
