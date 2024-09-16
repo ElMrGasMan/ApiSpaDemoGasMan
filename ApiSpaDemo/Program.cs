@@ -26,6 +26,7 @@ namespace ApiSpaDemo
                 });
             });
 
+
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             //Email Service

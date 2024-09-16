@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiSpaDemo", "ApiSpaDemo.csproj", "{7EE77D70-6982-4DF1-A078-B812192D1E88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiSpaDemo", "ApiSpaDemo.csproj", "{683D05BB-C49C-4F80-AC94-5B56039FD4E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7EE77D70-6982-4DF1-A078-B812192D1E88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7EE77D70-6982-4DF1-A078-B812192D1E88}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7EE77D70-6982-4DF1-A078-B812192D1E88}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7EE77D70-6982-4DF1-A078-B812192D1E88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{683D05BB-C49C-4F80-AC94-5B56039FD4E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{683D05BB-C49C-4F80-AC94-5B56039FD4E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{683D05BB-C49C-4F80-AC94-5B56039FD4E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{683D05BB-C49C-4F80-AC94-5B56039FD4E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {C30ECAD3-98D3-44AA-90F5-98E17B8370BE}
+		SolutionGuid = {6647D3BA-2BAF-490D-A682-CB011DF0C973}
 	EndGlobalSection
 EndGlobal

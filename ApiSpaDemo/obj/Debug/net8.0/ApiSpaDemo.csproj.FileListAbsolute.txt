@@ -297,3 +297,7 @@ C:/Users/JulianPz/source/repos/ApiSpaDemo/ApiSpaDemo/obj/Debug/net8.0/ApiSpaDemo
 /home/agustinsch/Documentos/ProyectoMDS4/ApiSpaDemoGasMan/ApiSpaDemo/bin/Debug/net8.0/BouncyCastle.Cryptography.dll
 /home/agustinsch/Documentos/ProyectoMDS4/ApiSpaDemoGasMan/ApiSpaDemo/bin/Debug/net8.0/MailKit.dll
 /home/agustinsch/Documentos/ProyectoMDS4/ApiSpaDemoGasMan/ApiSpaDemo/bin/Debug/net8.0/MimeKit.dll
+/home/agustinsch/Documentos/ProyectoMDS4/ApiSpaDemoGasMan/ApiSpaDemo/bin/Debug/net8.0/publish/web.config
+/home/agustinsch/Documentos/ProyectoMDS4/ApiSpaDemoGasMan/ApiSpaDemo/bin/Debug/net8.0/publish/ApiSpaDemo.deps.json
+/home/agustinsch/Documentos/ProyectoMDS4/ApiSpaDemoGasMan/ApiSpaDemo/bin/Debug/net8.0/publish/ApiSpaDemo.runtimeconfig.json
+/home/agustinsch/Documentos/ProyectoMDS4/ApiSpaDemoGasMan/ApiSpaDemo/bin/Debug/net8.0/publish/appsettings.Development.json
