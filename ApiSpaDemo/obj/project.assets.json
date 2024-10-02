@@ -5337,24 +5337,32 @@
     ]
   },
   "packageFolders": {
-    "/home/agustinsch/.nuget/packages/": {}
+    "C:\\Users\\MrGasMan\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/agustinsch/Documentos/ProyectoMDS4/ApiSpaDemoGasMan/ApiSpaDemo/ApiSpaDemo.csproj",
+      "projectUniqueName": "C:\\Users\\MrGasMan\\Documents\\ApiSpaDemo\\ApiSpaDemoGasMan\\ApiSpaDemo\\ApiSpaDemo.csproj",
       "projectName": "ApiSpaDemo",
-      "projectPath": "/home/agustinsch/Documentos/ProyectoMDS4/ApiSpaDemoGasMan/ApiSpaDemo/ApiSpaDemo.csproj",
-      "packagesPath": "/home/agustinsch/.nuget/packages/",
-      "outputPath": "/home/agustinsch/Documentos/ProyectoMDS4/ApiSpaDemoGasMan/ApiSpaDemo/obj/",
+      "projectPath": "C:\\Users\\MrGasMan\\Documents\\ApiSpaDemo\\ApiSpaDemoGasMan\\ApiSpaDemo\\ApiSpaDemo.csproj",
+      "packagesPath": "C:\\Users\\MrGasMan\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\MrGasMan\\Documents\\ApiSpaDemo\\ApiSpaDemoGasMan\\ApiSpaDemo\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "/home/agustinsch/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\MrGasMan\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -5367,6 +5375,11 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -5445,7 +5458,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.108/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

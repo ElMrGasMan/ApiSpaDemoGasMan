@@ -13,7 +13,10 @@ namespace ApiSpaDemo.Models
         public ICollection<Pregunta> Preguntas { get; set; } = []; 
         [Required]
         public ICollection<Respuesta> Respuestas { get; set; } = [];
-        [Required]
-        public ICollection<Turno> Turnos { get; set; } = [];
+
+        // Relación con ChatPrivado (muchos a muchos)
+        public ICollection<ChatPrivado> ChatsPrivados { get; set; }
+
+        public ICollection<MensajePrivado> MensajesPrivados { get; set; }
     }
 }

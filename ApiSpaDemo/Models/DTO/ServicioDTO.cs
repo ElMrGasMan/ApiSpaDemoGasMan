@@ -8,7 +8,6 @@ namespace ApiSpaDemo.Models.DTO
         [Key]
         public int ServicioId { get; set; }
 
-        [Required]
         public string? UsuarioId { get; set; }
 
         [Required]
@@ -21,5 +20,7 @@ namespace ApiSpaDemo.Models.DTO
         [Required]
         [MaxLength(30, ErrorMessage="El titulo del servicio no puede superar los 30 caracteres.")]
         public string? Titulo { get; set; }
+        public int DuracionMinut { get; set; }
+        public decimal Precio { get; set; }
     }
 }

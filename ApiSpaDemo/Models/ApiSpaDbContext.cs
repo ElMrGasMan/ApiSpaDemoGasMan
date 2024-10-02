@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace ApiSpaDemo.Models;
 
@@ -22,7 +23,8 @@ public partial class ApiSpaDbContext : IdentityDbContext<Usuario, IdentityRole, 
     public DbSet<Pregunta> Pregunta { get; set; } = default!;
     public DbSet<Respuesta> Respuesta { get; set; } = default!;
     public DbSet<Servicio> Servicio { get; set; } = default!;
-    public DbSet<Turno> Turno { get; set; } = default!;
+    public DbSet<ChatPrivado> ChatsPrivados { get; set; } = default!; 
+    public DbSet<MensajePrivado> MensajesPrivados { get; set; } = default!;
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
@@ -37,6 +39,28 @@ public partial class ApiSpaDbContext : IdentityDbContext<Usuario, IdentityRole, 
             entity.Property(e => e.RutaPdf).HasColumnName("RutaPDF");
             entity.Property(e => e.Titulo).HasMaxLength(50);
         });
+
+        modelBuilder.Entity<Usuario>()      // Relacion de Muchos a Muchos
+        .HasMany(u => u.ChatsPrivados)
+        .WithMany(c => c.Usuarios);
+
+        modelBuilder.Entity<Reserva>()
+        .HasOne(r => r.Cliente)        
+        .WithMany()
+        .HasForeignKey(r => r.ClienteId)
+        .OnDelete(DeleteBehavior.Restrict);     // Evitar eliminaciones en cascada
+
+        modelBuilder.Entity<Reserva>()
+        .HasOne(r => r.Empleado)       
+        .WithMany()
+        .HasForeignKey(r => r.EmpleadoId)
+        .OnDelete(DeleteBehavior.Restrict);     // Evitar eliminaciones en cascada
+
+        modelBuilder.Entity<Reserva>()
+        .HasOne(r => r.Servicio)       
+        .WithMany(s => s.Reservas)     
+        .HasForeignKey(r => r.ServicioId)
+        .OnDelete(DeleteBehavior.Restrict);     // Evitar eliminaciones en cascada
 
         OnModelCreatingPartial(modelBuilder);
     }
