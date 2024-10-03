@@ -34,10 +34,8 @@ namespace ApiSpaDemo.Models
         [MaxLength(30, ErrorMessage="El titulo del servicio no puede superar los 30 caracteres.")]
         public string? Titulo { get; set; }
 
-        [Required]
         public int DuracionMinut { get; set; }
 
-        [Required]
         [DataType(DataType.Currency)]
         public decimal Precio { get; set; }
     }

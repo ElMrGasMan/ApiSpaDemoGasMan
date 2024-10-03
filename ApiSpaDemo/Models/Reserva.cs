@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection.Metadata;
 
 namespace ApiSpaDemo.Models
 {
@@ -24,6 +25,9 @@ namespace ApiSpaDemo.Models
         [Required]
         [ForeignKey("ServicioId")]
         public Servicio Servicio { get; set; }
+
+        // Relacion 1:1 con Pago
+        public Pago? Pago { get; set; } // Reference navigation to dependent
 
         public DateTime HoraInicio { get; set; }
         public int DuracionMinut { get; set; }

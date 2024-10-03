@@ -15,7 +15,7 @@ namespace ApiSpaDemo.Models
         public ChatPrivado ChatPrivado { get; set; }
 
         [Required]
-        public int UsuarioId { get; set; }
+        public string UsuarioId { get; set; }
         [Required]
         [ForeignKey("UsuarioId")]
         public Usuario Usuario { get; set; }

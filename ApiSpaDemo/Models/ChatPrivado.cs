@@ -12,10 +12,12 @@ namespace ApiSpaDemo.Models
         [Required]
         [ForeignKey("ServicioId")]
         public Servicio Servicio { get; set; }
+        [Required]
+        public string? UsuarioId { get; set; }
+        [Required]
+        [ForeignKey("UsuarioId")]
+        public Usuario? UsuarioClass { get; set; }
 
-        // Relación muchos a muchos con Usuario
-        public ICollection<Usuario> Usuarios { get; set; }
-
-        public ICollection<MensajePrivado> Mensajes { get; set; }
+        public ICollection<MensajePrivado> Mensajes { get; set; } = [];
     }
 }

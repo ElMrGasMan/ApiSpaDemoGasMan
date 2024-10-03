@@ -5,7 +5,7 @@ namespace ApiSpaDemo.Models.DTO
     public class ChatPrivadoDTO
     {
         [Key]
-        public int RespuestaId { get; set; }
+        public int ChatId { get; set; }
         public int ServicioId { get; set; }
     }
 }

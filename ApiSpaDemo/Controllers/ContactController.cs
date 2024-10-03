@@ -4,10 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using ApiSpaDemo.Models;
 using ApiSpaDemo.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiSpaDemo.Controllers
 {
+    [EnableCors("ReglasCors")]
     [ApiController]
     [Route("api/[controller]")]
     public class ContactController : ControllerBase

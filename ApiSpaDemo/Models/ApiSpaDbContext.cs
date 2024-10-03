@@ -23,9 +23,10 @@ public partial class ApiSpaDbContext : IdentityDbContext<Usuario, IdentityRole, 
     public DbSet<Pregunta> Pregunta { get; set; } = default!;
     public DbSet<Respuesta> Respuesta { get; set; } = default!;
     public DbSet<Servicio> Servicio { get; set; } = default!;
-    public DbSet<ChatPrivado> ChatsPrivados { get; set; } = default!; 
-    public DbSet<MensajePrivado> MensajesPrivados { get; set; } = default!;
-
+    public DbSet<ChatPrivado> ChatPrivado { get; set; } = default!; 
+    public DbSet<MensajePrivado> MensajePrivado { get; set; } = default!;
+    public DbSet<Pago> Pago { get; set; } = default!;
+    public DbSet<Reserva> Reserva { get; set; } = default!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 

@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using ApiSpaDemo.Models;
 using ApiSpaDemo.Models.DTO;
 using AutoMapper;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiSpaDemo.Controllers
 {
+    [EnableCors("ReglasCors")]
     [ApiController]
     [Route("api/[controller]")]
     public class UsuarioController : ControllerBase
