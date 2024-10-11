@@ -15,10 +15,10 @@ namespace ApiSpaDemo.Models
         public Usuario? UsuarioClass { get; set; }
 
         // Relación con ChatPrivado
-        public ICollection<ChatPrivado> ChatsPrivados { get; set; }
+        public ICollection<ChatPrivado> ChatsPrivados { get; set; } = [];
 
-        // Relación con Reserva
-        public ICollection<Reserva> Reservas { get; set; }
+        // Relación con Turnos
+        public ICollection<Turno> Turnos { get; set; } = [];
 
         [Required]
         [MaxLength(50, ErrorMessage="El nombre del tipo no puede exceder 50 caracteres.")]

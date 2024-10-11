@@ -35,9 +35,24 @@ namespace ApiSpaDemo.Controllers
             return Ok(reservasDTO);
         }
 
+        // GET: api/Reserva
+        // Obtiene todas las reservas de todos los usuarios de forma Limitada
+        [HttpGet("reservAllLimited")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<ReservaDTO>>> GetReservaLimited(int saltear, int tomar)
+        {
+            var reservas = await _context.Reserva
+                .Skip(saltear)
+                .Take(tomar)
+                .ToListAsync();
+            var reservasDTO = _mapper.Map<List<ReservaDTO>>(reservas);
+            return Ok(reservasDTO);
+        }
+
+
         // GET: api/Reserva/5
         // Obtiene todas las reservas de un cierto cliente
-        [HttpGet]
+        [HttpGet("reservUserAll")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<ReservaDTO>>> GetReservaUsuario(string clienteId)
         {
@@ -48,6 +63,27 @@ namespace ApiSpaDemo.Controllers
             return Ok(reservasDTO);
         }
 
+
+        // GET: api/Reserva
+        // Obtiene todas las reservas del cliente autenticado
+        [HttpGet("reservAuthUserAll")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<ReservaSimpleDTO>>> GetReservaUsuarioAuth()
+        {
+            var usuario = await _userManager.GetUserAsync(User);
+            if (usuario == null)
+            {
+                return Unauthorized();
+            }
+
+            var reservas = await _context.Reserva
+                .Where(pag => pag.ClienteId == usuario.Id)
+                .ToListAsync();
+            var reservasSimplesDTO = _mapper.Map<List<ReservaSimpleDTO>>(reservas);
+
+            return Ok(reservasSimplesDTO);
+        }
+
         // GET: api/Reserva/5
         // Obtiene una reserva especifica 
         [HttpGet("{id}")]
@@ -55,7 +91,10 @@ namespace ApiSpaDemo.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ReservaDTO>> GetReserva(int id)
         {
-            var reserva = await _context.Reserva.FindAsync(id);
+            var reserva = await _context.Reserva
+                .Include(r => r.Turnos) // Incluir Turnos
+                .Include(r => r.Pago) // Y el pago
+                .FirstOrDefaultAsync(r => r.ReservaId == id);
 
             if (reserva == null)
             {
@@ -68,12 +107,12 @@ namespace ApiSpaDemo.Controllers
 
 
         // GET: api/Reserva/5
-        // Obtiene una reserva de un servicio específico del usuario autenticado
-        [HttpGet]
+        // Obtiene una reserva especifica del usuario autenticado
+        [HttpGet("reservaAuthUser")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<ReservaDTO>> GetReservaServUser(int servicioId)
+        public async Task<ActionResult<ReservaDTO>> GetReservaServUser(int id)
         {
             var usuario = await _userManager.GetUserAsync(User);
             if (usuario == null)
@@ -82,8 +121,10 @@ namespace ApiSpaDemo.Controllers
             }
 
             var reserva = await _context.Reserva
-                                   .Where(reserv => reserv.ServicioId == servicioId && reserv.ClienteId == usuario.Id)
-                                   .FirstOrDefaultAsync();
+                .Include(r => r.Turnos) // Incluir Turnos
+                .Include(r => r.Pago) // Y el pago
+                .Where(r => r.ClienteId == usuario.Id)
+                .FirstOrDefaultAsync(r => r.ReservaId == id);
 
             if (reserva == null)
             {
@@ -101,7 +142,7 @@ namespace ApiSpaDemo.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<ReservaDTO>> PostReserva(ReservaDTO reservaDTO, decimal monto, string formatoPago)
+        public async Task<ActionResult<ReservaSimpleDTO>> PostReserva(ReservaSimpleDTO reservaSimpleDTO, decimal monto, string formatoPago)
         {
             if (!ModelState.IsValid)
             {
@@ -114,7 +155,7 @@ namespace ApiSpaDemo.Controllers
                 return Unauthorized();
             }
 
-            var reserva = _mapper.Map<Reserva>(reservaDTO);
+            var reserva = _mapper.Map<Reserva>(reservaSimpleDTO);
             reserva.ClienteId = usuario.Id;
 
             var pago = new Pago
@@ -122,16 +163,62 @@ namespace ApiSpaDemo.Controllers
                 ReservaClass = reserva,
                 UsuarioClass = await _userManager.GetUserAsync(User),
                 FormatoPago = formatoPago,
-                Monto = monto
+                MontoTotal = monto
             };
 
             await _context.Reserva.AddAsync(reserva);
             await _context.Pago.AddAsync(pago);
             await _context.SaveChangesAsync();
 
-            var reservaToReturn = _mapper.Map<ReservaDTO>(reserva);
+            var reservaToReturn = _mapper.Map<ReservaSimpleDTO>(reserva);
             return CreatedAtAction(nameof(GetReserva), new { id = reservaToReturn.ReservaId }, reservaToReturn);
         }
+
+        // PUT: api/Reserva
+        // Agrega un nuevo turno a la Reserva
+        [HttpPut("agregarTurnoAReserva/{idReserva}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> AgregarTurnoAReserva(int idReserva, [FromBody] int idTurno)
+        {
+            var reserva = await _context.Reserva
+                .Include(r => r.Turnos) // Incluir los turnos 
+                .FirstOrDefaultAsync(r => r.ReservaId == idReserva);
+
+            if (reserva == null)
+            {
+                return NotFound($"No se encontró una reserva con el ID {idReserva}.");
+            }
+
+            var turno = await _context.Turno.FindAsync(idTurno);
+            if (turno == null)
+            {
+                return NotFound($"No se encontró un turno con el ID {idTurno}");
+            }
+
+            // Verificar si el turno ya está asignado a una reserva
+            if (turno.ReservaId != null)
+            {
+                return BadRequest($"El turno con ID {idTurno} ya está asignado a una reserva.");
+            }
+
+            turno.ReservaId = idReserva;
+            reserva.Turnos.Add(turno);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error al actualizar la reserva: {ex.Message}");
+            }
+
+            return Ok($"El turno con ID {idTurno} ha sido agregado a la reserva con ID {idReserva}");
+        }
+
 
         // DELETE: api/Reserva/5
         [HttpDelete("{id}")]

@@ -27,6 +27,7 @@ public partial class ApiSpaDbContext : IdentityDbContext<Usuario, IdentityRole, 
     public DbSet<MensajePrivado> MensajePrivado { get; set; } = default!;
     public DbSet<Pago> Pago { get; set; } = default!;
     public DbSet<Reserva> Reserva { get; set; } = default!;
+    public DbSet<Turno> Turno { get; set; } = default!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
@@ -41,26 +42,10 @@ public partial class ApiSpaDbContext : IdentityDbContext<Usuario, IdentityRole, 
             entity.Property(e => e.Titulo).HasMaxLength(50);
         });
 
-        modelBuilder.Entity<Usuario>()      // Relacion de Muchos a Muchos
-        .HasMany(u => u.ChatsPrivados)
-        .WithMany(c => c.Usuarios);
-
         modelBuilder.Entity<Reserva>()
         .HasOne(r => r.Cliente)        
         .WithMany()
         .HasForeignKey(r => r.ClienteId)
-        .OnDelete(DeleteBehavior.Restrict);     // Evitar eliminaciones en cascada
-
-        modelBuilder.Entity<Reserva>()
-        .HasOne(r => r.Empleado)       
-        .WithMany()
-        .HasForeignKey(r => r.EmpleadoId)
-        .OnDelete(DeleteBehavior.Restrict);     // Evitar eliminaciones en cascada
-
-        modelBuilder.Entity<Reserva>()
-        .HasOne(r => r.Servicio)       
-        .WithMany(s => s.Reservas)     
-        .HasForeignKey(r => r.ServicioId)
         .OnDelete(DeleteBehavior.Restrict);     // Evitar eliminaciones en cascada
 
         OnModelCreatingPartial(modelBuilder);
