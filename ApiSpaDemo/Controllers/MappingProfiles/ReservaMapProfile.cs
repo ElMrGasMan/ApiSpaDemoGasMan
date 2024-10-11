@@ -8,7 +8,11 @@ namespace ApiSpaDemo.Controllers.MappingProfiles
     {
         public ReservaMapProfile()
         {
-            CreateMap<Reserva, ReservaDTO>().ReverseMap();
+            CreateMap<Reserva, ReservaDTO>()
+                .ForMember(dest => dest.Turnos, opt => opt.MapFrom(src => src.Turnos))
+                .ForMember(dest => dest.Pago, opt => opt.MapFrom(src => src.Pago))
+                .ReverseMap();
+            CreateMap<Reserva, ReservaSimpleDTO>().ReverseMap();
         }
     }
 }

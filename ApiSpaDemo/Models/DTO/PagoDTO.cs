@@ -13,6 +13,6 @@ namespace ApiSpaDemo.Models.DTO
         public string FormatoPago { get; set; }
         [Required]
         [DataType(DataType.Currency)]
-        public decimal Monto { get; set; }
+        public decimal MontoTotal { get; set; }
     }
 }

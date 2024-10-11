@@ -12,18 +12,18 @@ namespace ApiSpaDemo.Models
         [ForeignKey("UsuarioId")]
         public Usuario? UsuarioClass { get; set; }
 
-        // ReservaId se setea a "nullable" ya que si Reserva se elimina...
-        // ...aun se puede necesitar el pago asociado.
+        // ReservaId se setea a "nullable" ya que si Reserva se elimina
+        // aun se puede necesitar el pago asociado.
         public string? ReservaId { get; set; }
         [Required]
         [ForeignKey("ReservaId")]
         public Reserva? ReservaClass { get; set; }
 
         [Required]
-        public string FormatoPago { get; set; }
+        public string FormatoPago { get; set; } = "";
         [Required]
         [DataType(DataType.Currency)]
-        public decimal Monto { get; set; }
+        public decimal MontoTotal { get; set; }
 
     }
 }
