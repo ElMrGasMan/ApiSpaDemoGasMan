@@ -22,5 +22,6 @@ namespace ApiSpaDemo.Models.DTO
         public string? Titulo { get; set; }
         public int DuracionMinut { get; set; }
         public decimal Precio { get; set; }
+        public short TiempoLimiteHoras { get; set; }
     }
 }

@@ -24,6 +24,8 @@ namespace ApiSpaDemo.Models
         [Required]
         [DataType(DataType.Currency)]
         public decimal MontoTotal { get; set; }
+        [Required]
+        public bool Pagado { get; set; } // Indicador de si el pago fue confirmado
 
     }
 }

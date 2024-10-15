@@ -26,6 +26,7 @@ namespace ApiSpaDemo
                 });
             });
 
+            builder.Services.AddHostedService<TurnoCleanupService>();
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

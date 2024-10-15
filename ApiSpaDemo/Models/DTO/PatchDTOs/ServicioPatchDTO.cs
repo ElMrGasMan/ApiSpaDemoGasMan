@@ -11,5 +11,10 @@ namespace ApiSpaDemo.Models.DTO.PatchDTOs
         [Required]
         [MaxLength(30, ErrorMessage="El titulo del servicio no puede superar los 30 caracteres.")]
         public string? Titulo { get; set; }
+        public int DuracionMinut { get; set; }
+
+        [DataType(DataType.Currency)]
+        public decimal Precio { get; set; }
+        public short TiempoLimiteHoras { get; set; }
     }
 }
