@@ -6,9 +6,11 @@ using MailKit.Net.Smtp;
 using MimeKit;
 using Microsoft.Extensions.Options;
 using ApiSpaDemo.Models;
+using Microsoft.AspNetCore.Cors;
 
 namespace ApiSpaDemo.Services
 {
+    [EnableCors("ReglasCors")]
     public class EmailService
     {
         private readonly SMTPSettingsModel _smtpSettingsModel;

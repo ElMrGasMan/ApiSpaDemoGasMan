@@ -1,8 +1,10 @@
 ﻿using ApiSpaDemo.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiSpaDemo.Services
 {
+    [EnableCors("ReglasCors")]
     public class TurnoCleanupService : IHostedService, IDisposable
     {
         private readonly IServiceScopeFactory _scopeFactory;

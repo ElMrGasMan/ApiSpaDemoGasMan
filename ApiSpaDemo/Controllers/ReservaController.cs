@@ -50,43 +50,46 @@ namespace ApiSpaDemo.Controllers
         }
 
         // GET: api/Reserva
-        // Obtiene todas las reservas de todos los usuarios con los turnos
-        // Lo mismo que lo anterior, pero con un chequeo de si los turnos no estan fuera de tiempo.
-        [HttpGet("reservAllWTurnosWVerificacion")]
+        // Verifica todas las reservas, que los turnos no hayan pasado el limite y no esten pagados.
+        [HttpGet("verificacionPagoDeReservas")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<ReservaDTO>>> GetReservaTurnosVerfic()
         {
-            var reservas = await _context.Reserva
-                .Include(r => r.Turnos) // Incluir Turnos
-                .Include(r => r.Pago) // Y el pago
+            // Obtener todas las reservas que no tienen pago confirmado
+            var reservasSinPago = await _context.Reserva
+                .Include(r => r.Pago)
+                .Include(r => r.Turnos)
+                .ThenInclude(t => t.ServicioClass)
+                .Where(r => !r.Pago.Pagado)
                 .ToListAsync();
 
-            foreach (var reserva in reservas)
+            foreach (var reserva in reservasSinPago)
             {
-                if (!reserva.Pago.Pagado)
+                foreach (var turno in reserva.Turnos)
                 {
-                    var turnosEliminados = false;
-
-                    foreach (var turno in reserva.Turnos.ToList()) // Uso de ToList() para evitar modificar mientras iteramos
+                    var fechaLimite = turno.FechaInicio.AddHours(-turno.ServicioClass.TiempoLimiteHoras);
+                    if (DateTime.Now >= fechaLimite)
                     {
-                        var fechaLimite = turno.FechaInicio.AddHours(-turno.ServicioClass.TiempoLimiteHoras);
-                        if (DateTime.Now >= fechaLimite)
-                        {
-                            // Eliminar turno si ha pasado la fecha límite
-                            reserva.Turnos.Remove(turno);
-                            turno.ReservaId = null;
-                            turnosEliminados = true;
-                        }
-                    }
+                        // Si la fecha límite ha pasado, eliminar el turno de la reserva
+                        reserva.Turnos.Remove(turno);
+                        turno.ReservaId = null;
 
-                    if (turnosEliminados)
-                    {
-                        await _context.SaveChangesAsync();
+                        // Arreglar el precio del Pago; restarle lo que valia el turno.
+                        reserva.Pago.MontoTotal -= turno.ServicioClass.Precio;
                     }
                 }
             }
-            var reservasDTO = _mapper.Map<List<ReservaDTO>>(reservas);
-            return Ok(reservasDTO);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error en la verificación: {ex.Message}");
+            }
+
+            return Ok("Pagos de reservas verificados exitosamente.");
         }
 
         // GET: api/Reserva
