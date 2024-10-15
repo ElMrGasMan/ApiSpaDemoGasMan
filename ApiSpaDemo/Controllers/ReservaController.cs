@@ -36,6 +36,63 @@ namespace ApiSpaDemo.Controllers
         }
 
         // GET: api/Reserva
+        // Obtiene todas las reservas de todos los usuarios con los turnos
+        [HttpGet("reservAllWTurnos")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<ReservaDTO>>> GetReservaTurnos()
+        {
+            var reservas = await _context.Reserva
+                .Include(r => r.Turnos) // Incluir Turnos
+                .Include(r => r.Pago) // Y el pago
+                .ToListAsync();
+            var reservasDTO = _mapper.Map<List<ReservaDTO>>(reservas);
+            return Ok(reservasDTO);
+        }
+
+        // GET: api/Reserva
+        // Verifica todas las reservas, que los turnos no hayan pasado el limite y no esten pagados.
+        [HttpGet("verificacionPagoDeReservas")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<ReservaDTO>>> GetReservaTurnosVerfic()
+        {
+            // Obtener todas las reservas que no tienen pago confirmado
+            var reservasSinPago = await _context.Reserva
+                .Include(r => r.Pago)
+                .Include(r => r.Turnos)
+                .ThenInclude(t => t.ServicioClass)
+                .Where(r => !r.Pago.Pagado)
+                .ToListAsync();
+
+            foreach (var reserva in reservasSinPago)
+            {
+                foreach (var turno in reserva.Turnos)
+                {
+                    var fechaLimite = turno.FechaInicio.AddHours(-turno.ServicioClass.TiempoLimiteHoras);
+                    if (DateTime.Now >= fechaLimite)
+                    {
+                        // Si la fecha límite ha pasado, eliminar el turno de la reserva
+                        reserva.Turnos.Remove(turno);
+                        turno.ReservaId = null;
+
+                        // Arreglar el precio del Pago; restarle lo que valia el turno.
+                        reserva.Pago.MontoTotal -= turno.ServicioClass.Precio;
+                    }
+                }
+            }
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error en la verificación: {ex.Message}");
+            }
+
+            return Ok("Pagos de reservas verificados exitosamente.");
+        }
+
+        // GET: api/Reserva
         // Obtiene todas las reservas de todos los usuarios de forma Limitada
         [HttpGet("reservAllLimited")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -174,6 +231,7 @@ namespace ApiSpaDemo.Controllers
             return CreatedAtAction(nameof(GetReserva), new { id = reservaToReturn.ReservaId }, reservaToReturn);
         }
 
+
         // PUT: api/Reserva
         // Agrega un nuevo turno a la Reserva
         [HttpPut("agregarTurnoAReserva/{idReserva}")]
@@ -217,6 +275,45 @@ namespace ApiSpaDemo.Controllers
             }
 
             return Ok($"El turno con ID {idTurno} ha sido agregado a la reserva con ID {idReserva}");
+        }
+
+
+        // PUT: api/Reserva
+        // Elimina un turno de la Reserva
+        [HttpPut("eliminarTurnoAReserva/{idReserva}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> EliminarTurnoAReserva(int idReserva, [FromBody] int idTurno)
+        {
+            Reserva? reserva = await _context.Reserva
+                .Include(r => r.Turnos) // Incluir los turnos 
+                .FirstOrDefaultAsync(r => r.ReservaId == idReserva);
+
+            if (reserva == null)
+            {
+                return NotFound($"No se encontró una reserva con el ID {idReserva}.");
+            }
+
+            Turno? turno = await _context.Turno.FindAsync(idTurno);
+            if (turno == null)
+            {
+                return NotFound($"No se encontró un turno con el ID {idTurno}");
+            }
+
+            reserva.Turnos.Remove(turno);
+            turno.ReservaId = null;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error al actualizar la reserva: {ex.Message}");
+            }
+
+            return Ok($"El turno con ID {idTurno} ha sido eliminado a la reserva con ID {idReserva}");
         }
 
 

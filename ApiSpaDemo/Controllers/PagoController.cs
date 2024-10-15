@@ -68,11 +68,14 @@ namespace ApiSpaDemo.Controllers
 
         // PATCH: api/Pago/5
         // Suma o Resta al monto total del Pago: 1 para sumar, 0 para restar.
-        [HttpPatch("{id}")]
+        // MUY IMPORTANTE: ACORDARSE DE LLAMAR ESTE ENDPOINT A LA HORA DE QUE SE ELIMINE O AGREGUE UN 
+        // TURNO EN EL FRONT-END.
+        [HttpPatch("actualizarMonto/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<PagoDTO>>> SumarRestarPago(string id, short action, decimal monto)
+        public async Task<ActionResult<IEnumerable<PagoDTO>>> SumarRestarPago(int id, short action, decimal monto)
         {
             var pago = await _context.Pago.FindAsync(id);
             if (pago == null)
@@ -106,6 +109,31 @@ namespace ApiSpaDemo.Controllers
             }
 
             return Ok($"El monto total del pago con ID {id} se ha actualizado a {pago.MontoTotal}.");
+        }
+
+        // PATCH: api/Pago/5
+        // Establece el Pago como Pagado
+        [HttpPatch("establecerEstPago/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<PagoDTO>>> EstablecerEstadoPago(int id, bool estado)
+        {
+            var pago = await _context.Pago.FindAsync(id);
+            if (pago == null) return NotFound();
+            
+            pago.Pagado = estado;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error al actualizar el pago: {ex.Message}");
+            }
+
+            return Ok($"El estado del pago con ID {id} se ha actualizado a " + (estado ? "Pagado." : "No Pagado."));
         }
 
 

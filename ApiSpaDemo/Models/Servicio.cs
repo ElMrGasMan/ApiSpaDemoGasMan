@@ -38,5 +38,6 @@ namespace ApiSpaDemo.Models
 
         [DataType(DataType.Currency)]
         public decimal Precio { get; set; }
+        public short TiempoLimiteHoras { get; set; }
     }
 }

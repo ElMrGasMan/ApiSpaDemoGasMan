@@ -15,7 +15,9 @@ namespace APIWeb_SPASentirseBien.Controllers.MappingProfiles
             .ForMember(n => n.ServicioId, option => option.Ignore())
             .ForMember(n => n.TipoServicio, option => option.Ignore())
             .ForMember(n => n.UsuarioClass, option => option.Ignore())
-            .ForMember(n => n.UsuarioId, option => option.Ignore());
+            .ForMember(n => n.UsuarioId, option => option.Ignore())
+            .ForMember(n => n.ChatsPrivados, option => option.Ignore())
+            .ForMember(n => n.Turnos, option => option.Ignore());
             CreateMap<Servicio, ServicioPatchDTO>();
         }
     }
