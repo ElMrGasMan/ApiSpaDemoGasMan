@@ -48,6 +48,20 @@ public partial class ApiSpaDbContext : IdentityDbContext<Usuario, IdentityRole, 
         .HasForeignKey(r => r.ClienteId)
         .OnDelete(DeleteBehavior.Restrict);     // Evitar eliminaciones en cascada
 
+       modelBuilder.Entity<MensajePrivado>()
+       .HasOne(mp => mp.ChatPrivado)
+       .WithMany(cp => cp.Mensajes)
+       .HasForeignKey(mp => mp.ChatId)
+       .OnDelete(DeleteBehavior.NoAction); // Al eliminar el registro en `ChatPrivado`, `ChatId` en `MensajePrivado` será NULL
+
+        modelBuilder.Entity<Servicio>()
+            .Property(s => s.Precio)
+            .HasPrecision(10, 2);
+
+        modelBuilder.Entity<Pago>()
+            .Property(p => p.MontoTotal)
+            .HasPrecision(10, 2);
+
         OnModelCreatingPartial(modelBuilder);
     }
 

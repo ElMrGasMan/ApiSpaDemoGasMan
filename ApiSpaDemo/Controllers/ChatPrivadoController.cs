@@ -26,7 +26,7 @@ namespace ApiSpaDemo.Controllers
 
         // GET: api/ChatPrivado/5
         // Obtiene el chat del servicio del usuario autenticado actualmente
-        [HttpGet("{servicioId}")]
+        [HttpGet("traerChatAuthUser/{servicioId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ChatPrivadoDTO>> GetChatPrivado(int servicioId)
