@@ -14,7 +14,7 @@ namespace ApiSpaDemo.Models
 
         // ReservaId se setea a "nullable" ya que si Reserva se elimina
         // aun se puede necesitar el pago asociado.
-        public string? ReservaId { get; set; }
+        public int? ReservaId { get; set; }
         [Required]
         [ForeignKey("ReservaId")]
         public Reserva? ReservaClass { get; set; }

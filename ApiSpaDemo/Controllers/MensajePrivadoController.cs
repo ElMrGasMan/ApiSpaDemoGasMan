@@ -27,7 +27,7 @@ namespace ApiSpaDemo.Controllers
 
         // GET: api/MensajePrivado
         // Obtiene todos los mensajes (creo que no hace falta)
-        [HttpGet]
+        [HttpGet("all")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<MensajePrivadoDTO>>> GetMensajePrivado()
         {
@@ -38,7 +38,7 @@ namespace ApiSpaDemo.Controllers
 
         // GET: api/MensajePrivado/5
         // Obtiene todos los mensajes de un cierto chat 
-        [HttpGet("{chatId}")]
+        [HttpGet("getMensajesChat/{chatId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<MensajePrivadoDTO>> GetMensajePrivado(int chatId)

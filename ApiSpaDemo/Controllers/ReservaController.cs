@@ -239,7 +239,7 @@ namespace ApiSpaDemo.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AgregarTurnoAReserva(int idReserva, [FromBody] int idTurno)
+        public async Task<IActionResult> AgregarTurnoAReserva(int idReserva, int idTurno)
         {
             var reserva = await _context.Reserva
                 .Include(r => r.Turnos) // Incluir los turnos 
@@ -284,7 +284,7 @@ namespace ApiSpaDemo.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> EliminarTurnoAReserva(int idReserva, [FromBody] int idTurno)
+        public async Task<IActionResult> EliminarTurnoAReserva(int idReserva, int idTurno)
         {
             Reserva? reserva = await _context.Reserva
                 .Include(r => r.Turnos) // Incluir los turnos 

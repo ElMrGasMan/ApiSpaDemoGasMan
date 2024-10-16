@@ -6,7 +6,7 @@ namespace ApiSpaDemo.Models
     public class Turno
     {
         [Key]
-        public int IdTurno { get; set; }
+        public int TurnoId { get; set; }
 
         [Required]
         public int ServicioId { get; set; }

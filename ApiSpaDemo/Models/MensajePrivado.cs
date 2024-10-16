@@ -8,11 +8,9 @@ namespace ApiSpaDemo.Models
         [Key]
         public int MensajePrivadoId { get; set; }
 
-        [Required]
-        public int ChatId { get; set; }
-        [Required]
+        public int? ChatId { get; set; }
         [ForeignKey("ChatId")]
-        public ChatPrivado ChatPrivado { get; set; }
+        public ChatPrivado? ChatPrivado { get; set; }
 
         [Required]
         public string UsuarioId { get; set; }
