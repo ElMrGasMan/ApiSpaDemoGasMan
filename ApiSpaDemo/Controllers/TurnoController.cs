@@ -28,8 +28,8 @@ namespace ApiSpaDemo.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<TurnoDTO>>> GetTurno()
         {
-            var turno = await _context.Turno.ToListAsync();
-            var turnoDTO = _mapper.Map<List<TurnoDTO>>(turno);
+            List<Turno> turno = await _context.Turno.ToListAsync();
+            List<TurnoDTO> turnoDTO = _mapper.Map<List<TurnoDTO>>(turno);
             return Ok(turnoDTO);
         }
 
@@ -40,11 +40,11 @@ namespace ApiSpaDemo.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<TurnoDTO>>> GetTurnoLimited(int saltear, int tomar)
         {
-            var turno = await _context.Turno
+            List<Turno> turno = await _context.Turno
                 .Skip(saltear)
                 .Take(tomar)
                 .ToListAsync();
-            var turnoDTO = _mapper.Map<List<TurnoDTO>>(turno);
+            List<TurnoDTO> turnoDTO = _mapper.Map<List<TurnoDTO>>(turno);
             return Ok(turnoDTO);
         }
 
@@ -55,10 +55,10 @@ namespace ApiSpaDemo.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<TurnoDTO>>> GetTurnoServ(int servicioId)
         {
-            var turno = await _context.Turno
+            List<Turno> turno = await _context.Turno
                 .Where(t => t.ServicioId == servicioId)
                 .ToListAsync();
-            var turnoDTO = _mapper.Map<List<TurnoDTO>>(turno);
+            List<TurnoDTO> turnoDTO = _mapper.Map<List<TurnoDTO>>(turno);
             return Ok(turnoDTO);
         }
 
@@ -74,12 +74,12 @@ namespace ApiSpaDemo.Controllers
                 return BadRequest(ModelState);
             }
 
-            var turno = _mapper.Map<Turno>(turnoDTO);
+            Turno turno = _mapper.Map<Turno>(turnoDTO);
             turno.ReservaId = null;
             _context.Turno.Add(turno);
             await _context.SaveChangesAsync();
 
-            var turnoToReturn = _mapper.Map<TurnoDTO>(turno);
+            TurnoDTO turnoToReturn = _mapper.Map<TurnoDTO>(turno);
             return CreatedAtAction(nameof(GetTurno), new { id = turnoToReturn.IdTurno }, turnoToReturn);
         }
 
@@ -90,7 +90,7 @@ namespace ApiSpaDemo.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteTurno(int id)
         {
-            var turno = await _context.Turno.FindAsync(id);
+            Turno? turno = await _context.Turno.FindAsync(id);
             if (turno == null)
             {
                 return NotFound();

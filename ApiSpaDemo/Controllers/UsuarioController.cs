@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using ApiSpaDemo.Models;
 using ApiSpaDemo.Models.DTO;
 using AutoMapper;
@@ -31,64 +27,99 @@ namespace ApiSpaDemo.Controllers
             _roleManager = roleManager;
         }
 
-        //Obtener un usuario por Id y devolver solo lo necesario.
+        //Obtener un usuario por Id.
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<UsuarioDTO>> GetUsuario(string id)
+        public async Task<ActionResult<UsuarioDTOwID>> GetUsuario(string id)
         {
-            var usuario = await _context.Users.FirstOrDefaultAsync(u => u.Id.ToLower() == id.ToLower());
+            Usuario? usuario = await _userManager.FindByIdAsync(id);
 
             if (usuario == null)
             {
                 return NotFound();
             }
 
-            var usuarioDto = _mapper.Map<UsuarioDTO>(usuario);
+            UsuarioDTOwID usuarioDto = _mapper.Map<UsuarioDTOwID>(usuario);
+            usuarioDto.Roles = (await _userManager.GetRolesAsync(usuario)).ToList();
             return Ok(usuarioDto);
         }
 
         //Obtiene datos del usuario autenticado actualmente
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpGet("currentuserdata")]
         public async Task<ActionResult<UsuarioDTOwID>> GetUsuario()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
-            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            Usuario? usuario = await _userManager.GetUserAsync(User);
+            if (usuario == null)
+            {
+                return Unauthorized("No hay ningun usuario autenticado actualmente.");
+            }
 
-            var usuarioDto = new UsuarioDTOwID
+            string userId = usuario.Id;
+            string? userName = usuario.UserName;
+            string? email = usuario.Email;
+            IList<string> roles = await _userManager.GetRolesAsync(usuario);
+
+            UsuarioDTOwID usuarioDto = new UsuarioDTOwID
             {
                 Id = userId,
                 UserName = userName,
-                Email = email
+                Email = email,
+                Roles = roles.ToList()
             };
             return Ok(usuarioDto);
         }
 
 
         //Obtener todos los usuarios.
+        //Opcionalmente se puede pasar para filtrar por Rol.
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet("getAllUsers")]
         public async Task<ActionResult<IEnumerable<UsuarioDTOwID>>> GetAllUsuarios()
         {
-            var usuarios = await _context.Users.ToListAsync();
-            var usuarioDTOs = _mapper.Map<List<UsuarioDTOwID>>(usuarios);
-            return usuarioDTOs;
+            List<Usuario> usuarios = await _userManager.Users.ToListAsync();
+            List<UsuarioDTOwID> usuariosConRoles = new List<UsuarioDTOwID>();
+
+            foreach (Usuario? usuario in usuarios)
+            {
+                IList<string> roles = await _userManager.GetRolesAsync(usuario);
+
+                usuariosConRoles.Add(new UsuarioDTOwID
+                {
+                    Id = usuario.Id,
+                    UserName = usuario.UserName,
+                    Email = usuario.Email,
+                    Roles = roles.ToList()
+                });
+            }
+
+            return Ok(usuariosConRoles);
         }
 
-
-        //Obtener todos los usuarios. De forma limitada
+        //Obtener los usuarios filtrados por un Rol
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [HttpGet("getAllUsersLimited")]
-        public async Task<ActionResult<IEnumerable<UsuarioDTOwID>>> GetAllUsuariosLimited(int saltear, int tomar)
+        [HttpGet("getAllUsersByRol/{rol}")]
+        public async Task<ActionResult<IEnumerable<UsuarioDTOwID>>> GetAllUsuariosPorRol(string rol)
         {
-            var usuarios = await _context.Users
-                .Skip(saltear)
-                .Take(tomar)
-                .ToListAsync();
-            var usuarioDTOs = _mapper.Map<List<UsuarioDTOwID>>(usuarios);
-            return usuarioDTOs;
+            IList<Usuario> usuarios = await _userManager.GetUsersInRoleAsync(rol);
+            List<UsuarioDTOwID> usuariosConRoles = new List<UsuarioDTOwID>();
+
+            foreach (Usuario usuario in usuarios)
+            {
+                IList<string> roles = await _userManager.GetRolesAsync(usuario);
+
+                usuariosConRoles.Add(new UsuarioDTOwID
+                {
+                    Id = usuario.Id,
+                    UserName = usuario.UserName,
+                    Email = usuario.Email,
+                    Roles = roles.ToList()
+                });
+            }
+
+            return Ok(usuariosConRoles);
         }
 
 
@@ -100,7 +131,7 @@ namespace ApiSpaDemo.Controllers
         [HttpPost("cambiarRolUsuario")]
         public async Task<IActionResult> CambiarRolUsuario(string userId, string newRole)
         {
-            var user = await _userManager.FindByIdAsync(userId);
+            Usuario? user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
                 return NotFound("Usuario no encontrado");
@@ -111,14 +142,14 @@ namespace ApiSpaDemo.Controllers
                 return BadRequest("El rol especificado no existe");
             }
 
-            var userRoles = await _userManager.GetRolesAsync(user);
+            IList<string> userRoles = await _userManager.GetRolesAsync(user);
             if (userRoles.Contains(newRole))
             {
                 return BadRequest("El usuario ya tiene este rol");
             }
 
             // Asignar el nuevo rol
-            var resultAdd = await _userManager.AddToRoleAsync(user, newRole);
+            IdentityResult resultAdd = await _userManager.AddToRoleAsync(user, newRole);
             if (resultAdd.Succeeded)
             {
                 return Ok("Rol cambiado exitosamente");
