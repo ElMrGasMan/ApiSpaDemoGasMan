@@ -28,6 +28,7 @@ public partial class ApiSpaDbContext : IdentityDbContext<Usuario, IdentityRole, 
     public DbSet<Pago> Pago { get; set; } = default!;
     public DbSet<Reserva> Reserva { get; set; } = default!;
     public DbSet<Turno> Turno { get; set; } = default!;
+    public DbSet<Notificacion> Notificacion { get; set; } = default!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 

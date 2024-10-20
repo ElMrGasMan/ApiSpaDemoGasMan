@@ -101,7 +101,7 @@ namespace ApiSpaDemo
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Usuario>>();
 
-                string[] roleNames = { "Admin", "Cliente", "Empleado" };
+                string[] roleNames = { "Admin", "Cliente", "Empleado", "Secretario" };
                 foreach (var roleName in roleNames)
                 {
                     if (!await roleManager.RoleExistsAsync(roleName))

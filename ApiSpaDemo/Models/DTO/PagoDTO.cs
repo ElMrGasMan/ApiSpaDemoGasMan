@@ -7,6 +7,7 @@ namespace ApiSpaDemo.Models.DTO
         [Key]
         public int PagoId { get; set; }
 
+        public string? UsuarioId { get; set; }
         public string? ReservaId { get; set; }
 
         [Required]

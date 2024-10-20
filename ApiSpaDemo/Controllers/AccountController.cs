@@ -38,13 +38,13 @@ namespace ApiSpaDemo.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var user = new Usuario
+                Usuario user = new Usuario
                 {
                     UserName = model.Username,
                     Email = model.Email
                 };
 
-                var result = await _userManager.CreateAsync(user, model.Password);
+                IdentityResult result = await _userManager.CreateAsync(user, model.Password);
 
                 if (!result.Succeeded)
                     return BadRequest(result.Errors);
@@ -58,6 +58,49 @@ namespace ApiSpaDemo.Controllers
                 return StatusCode(500, new { message = "Internal server error", error = ex.Message });
             }
         }
+
+
+        [EnableCors("PermitirTodo")]
+        [HttpPost("registerEmpleado")]
+        public async Task<IActionResult> RegisterEmpleado([FromBody] RegisterModel model, bool esSecretario)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                Usuario user = new Usuario
+                {
+                    UserName = model.Username,
+                    Email = model.Email
+                };
+
+                IdentityResult result = await _userManager.CreateAsync(user, model.Password);
+
+                if (!result.Succeeded)
+                    return BadRequest(result.Errors);
+
+                if (esSecretario)
+                {
+                    result = await _userManager.AddToRoleAsync(user, "Secretario");
+                }
+                else
+                {
+                    result = await _userManager.AddToRoleAsync(user, "Empleado");
+                }
+
+                if (!result.Succeeded) return BadRequest(result.Errors);
+                
+                return Ok("Empleado o Secretario registrado correctamente.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error en el registro de usuario");
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+        }
+
+
         [EnableCors("PermitirTodo")]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
@@ -66,13 +109,13 @@ namespace ApiSpaDemo.Controllers
             return BadRequest(ModelState);
 
             // Buscar al usuario por nombre de usuario o email
-            var user = await _userManager.FindByNameAsync(model.Username) ?? await _userManager.FindByEmailAsync(model.Username);
+            Usuario? user = await _userManager.FindByNameAsync(model.Username) ?? await _userManager.FindByEmailAsync(model.Username);
             
             if (user == null)
                 return Unauthorized("Invalid login attempt.");
 
             // Verificar la contraseña
-            var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, lockoutOnFailure: false);
+            Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {

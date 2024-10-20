@@ -25,7 +25,7 @@ namespace ApiSpaDemo.Controllers
         }
 
         // GET: api/ChatPrivado/5
-        // Obtiene el chat del servicio del usuario autenticado actualmente
+        // Obtiene el chat del servicio del usuario autenticado actualmente, sin los mensajes.
         [HttpGet("traerChatAuthUser/{servicioId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -40,6 +40,28 @@ namespace ApiSpaDemo.Controllers
 
             var chatsPrivadosDTO = _mapper.Map<ChatPrivadoDTO>(chatsPrivados);
             return Ok(chatsPrivadosDTO);
+        }
+
+
+        // GET: api/ChatPrivado/5
+        // Obtiene el chat del servicio del usuario autenticado actualmente más los mensajes que tenga.
+        // No se si es mejor que usar el endpoint GET del Controlador de mensajes privados, pero
+        // capaz es más eficiente.
+        [HttpGet("traerChatAuthUserConMensajes/{servicioId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult<ChatPrivadoDTO>> GetChatPrivadoConMensajes(int servicioId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) return Unauthorized("El usuario no está autenticado.");
+
+            var chatsPrivados = await _context.ChatPrivado
+                                   .Where(chat => chat.ServicioId == servicioId && chat.UsuarioId == userId)
+                                   .Include(c => c.Mensajes)
+                                   .FirstOrDefaultAsync();
+
+            var chatPrivadoDTO = _mapper.Map<ChatPrivadoDTO>(chatsPrivados);
+            return Ok(chatPrivadoDTO);
         }
 
         // POST: api/ChatPrivado

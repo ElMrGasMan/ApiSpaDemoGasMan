@@ -29,6 +29,7 @@ namespace ApiSpaDemo.Controllers
         }
 
         // GET: api/Servicio
+        // Obtiene todos los servicios
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<ServicioDTO>>> GetServicio()
@@ -39,6 +40,7 @@ namespace ApiSpaDemo.Controllers
         }
 
         // GET: api/Servicio/tipo/{tipo}
+        // Obtiene un servicio de un determinado tipo
         [HttpGet("tipo/{tipo}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -61,22 +63,32 @@ namespace ApiSpaDemo.Controllers
         }
 
         // GET: api/Servicio/5
+        // Obtiene un servicio en específico, con o sin los Turnos.
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ServicioDTO>> GetServicio(int id)
+        public async Task<ActionResult<ServicioDTO>> GetServicio(int id, bool conTurnos)
         {
-            var servicio = await _context.Servicio.FindAsync(id);
-            
             if (id < 0)
             {
                 return BadRequest();
             }
-            if (servicio == null)
+
+            Servicio? servicio;
+
+            if (conTurnos)
             {
-                return NotFound();
+                servicio = await _context.Servicio
+                    .Include(s => s.Turnos)
+                    .FirstOrDefaultAsync(s => s.ServicioId == id);
             }
+            else
+            {
+                servicio = await _context.Servicio.FindAsync(id);
+            }
+
+            if (servicio == null) return NotFound();
 
             var servicioDTO = _mapper.Map<ServicioDTO>(servicio);
             return servicioDTO;

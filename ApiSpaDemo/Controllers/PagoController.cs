@@ -36,7 +36,7 @@ namespace ApiSpaDemo.Controllers
             return Ok(pagosDTO);
         }
 
-
+        /*
         // GET: api/Pago
         // Obtiene todos los pagos de todos los usuarios de forma Limitada
         [HttpGet("getAllPagosLimited")]
@@ -50,6 +50,7 @@ namespace ApiSpaDemo.Controllers
             var pagosDTO = _mapper.Map<List<PagoDTO>>(pagos);
             return Ok(pagosDTO);
         }
+        */
 
 
         // GET: api/Pago/5
@@ -112,7 +113,7 @@ namespace ApiSpaDemo.Controllers
         }
 
         // PATCH: api/Pago/5
-        // Establece el Pago como Pagado
+        // Establece el Pago como Pagado o no.
         [HttpPatch("establecerEstPago/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

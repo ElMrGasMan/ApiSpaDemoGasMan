@@ -7,5 +7,6 @@ namespace ApiSpaDemo.Models.DTO
         [Key]
         public int ChatId { get; set; }
         public int ServicioId { get; set; }
+        public ICollection<MensajePrivadoDTO> Mensajes { get; set; } = [];
     }
 }

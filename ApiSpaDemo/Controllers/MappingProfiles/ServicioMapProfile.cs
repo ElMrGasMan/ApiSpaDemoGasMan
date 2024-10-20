@@ -9,8 +9,10 @@ namespace APIWeb_SPASentirseBien.Controllers.MappingProfiles
     {
         public ServicioMapProfile()
         {
-            CreateMap<Servicio, ServicioDTO>();
-            CreateMap<ServicioDTO, Servicio>();
+            CreateMap<Servicio, ServicioDTO>()
+                .ForMember(dest => dest.Turnos, opt => opt.MapFrom(src => src.Turnos));
+            CreateMap<ServicioDTO, Servicio>()
+                .ForMember(dest => dest.Turnos, opt => opt.MapFrom(src => src.Turnos));
             CreateMap<ServicioPatchDTO, Servicio>()
             .ForMember(n => n.ServicioId, option => option.Ignore())
             .ForMember(n => n.TipoServicio, option => option.Ignore())

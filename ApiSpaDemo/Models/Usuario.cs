@@ -21,6 +21,7 @@ namespace ApiSpaDemo.Models
         // Relación con ChatPrivado (muchos a muchos)
         public ICollection<ChatPrivado> ChatsPrivados { get; set; } = [];
 
+        public ICollection<Notificacion> Notificaciones { get; set; } = [];
         public ICollection<MensajePrivado> MensajesPrivados { get; set; } = [];
     } 
 }

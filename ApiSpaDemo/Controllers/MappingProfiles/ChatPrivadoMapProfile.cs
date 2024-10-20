@@ -8,7 +8,9 @@ namespace ApiSpaDemo.Controllers.MappingProfiles
     {
         public ChatPrivadoMapProfile()
         {
-            CreateMap<ChatPrivado, ChatPrivadoDTO>().ReverseMap();
+            CreateMap<ChatPrivado, ChatPrivadoDTO>()
+                .ForMember(dest => dest.Mensajes, opt => opt.MapFrom(src => src.Mensajes))
+                .ReverseMap();
         }
     }
 }

@@ -28,23 +28,33 @@ namespace ApiSpaDemo.Controllers
         // Obtiene todas las reservas de todos los usuarios
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<ReservaDTO>>> GetReserva()
+        public async Task<ActionResult<IEnumerable<ReservaDTO>>> GetReserva(bool conTurnos, bool conPago)
         {
-            var reservas = await _context.Reserva.ToListAsync();
-            var reservasDTO = _mapper.Map<List<ReservaDTO>>(reservas);
-            return Ok(reservasDTO);
-        }
-
-        // GET: api/Reserva
-        // Obtiene todas las reservas de todos los usuarios con los turnos
-        [HttpGet("reservAllWTurnos")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<ReservaDTO>>> GetReservaTurnos()
-        {
-            var reservas = await _context.Reserva
-                .Include(r => r.Turnos) // Incluir Turnos
-                .Include(r => r.Pago) // Y el pago
+            List<Reserva> reservas = new();
+            if (conTurnos && conPago)
+            {
+                reservas = await _context.Reserva
+                .Include(p => p.Turnos)
+                .Include(p => p.Pago)
                 .ToListAsync();
+            }
+            else if (conTurnos)
+            {
+                reservas = await _context.Reserva
+                .Include(p => p.Turnos)
+                .ToListAsync();
+            }
+            else if (conPago)
+            {
+                reservas = await _context.Reserva
+                .Include(p => p.Pago)
+                .ToListAsync();
+            }
+            else
+            {
+                reservas = await _context.Reserva
+                .ToListAsync();
+            }
             var reservasDTO = _mapper.Map<List<ReservaDTO>>(reservas);
             return Ok(reservasDTO);
         }
@@ -92,6 +102,7 @@ namespace ApiSpaDemo.Controllers
             return Ok("Pagos de reservas verificados exitosamente.");
         }
 
+        /*
         // GET: api/Reserva
         // Obtiene todas las reservas de todos los usuarios de forma Limitada
         [HttpGet("reservAllLimited")]
@@ -105,17 +116,45 @@ namespace ApiSpaDemo.Controllers
             var reservasDTO = _mapper.Map<List<ReservaDTO>>(reservas);
             return Ok(reservasDTO);
         }
+        */
 
 
         // GET: api/Reserva/5
         // Obtiene todas las reservas de un cierto cliente
         [HttpGet("reservUserAll")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<ReservaDTO>>> GetReservaUsuario(string clienteId)
+        public async Task<ActionResult<IEnumerable<ReservaDTO>>> GetReservaUsuario(string clienteId, bool conTurnos, bool conPago)
         {
-            var reservas = await _context.Reserva
-                                   .Where(pag => pag.ClienteId == clienteId)
-                                   .ToListAsync();
+            List<Reserva> reservas = new();
+            if (conTurnos && conPago)
+            {
+                reservas = await _context.Reserva
+                .Where(pag => pag.ClienteId == clienteId)
+                .Include(p => p.Turnos)
+                .Include(p => p.Pago)
+                .ToListAsync();
+            }
+            else if (conTurnos)
+            {
+                reservas = await _context.Reserva
+                .Where(pag => pag.ClienteId == clienteId)
+                .Include(p => p.Turnos)
+                .ToListAsync();
+            }
+            else if (conPago)
+            {
+                reservas = await _context.Reserva
+                .Where(pag => pag.ClienteId == clienteId)
+                .Include(p => p.Pago)
+                .ToListAsync();
+            }
+            else
+            {
+                reservas = await _context.Reserva
+                .Where(pag => pag.ClienteId == clienteId)
+                .ToListAsync();
+            }
+
             var reservasDTO = _mapper.Map<List<ReservaDTO>>(reservas);
             return Ok(reservasDTO);
         }
@@ -125,7 +164,8 @@ namespace ApiSpaDemo.Controllers
         // Obtiene todas las reservas del cliente autenticado
         [HttpGet("reservAuthUserAll")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<ReservaSimpleDTO>>> GetReservaUsuarioAuth()
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult<IEnumerable<ReservaSimpleDTO>>> GetReservaUsuarioAuth(bool conTurnos, bool conPago)
         {
             var usuario = await _userManager.GetUserAsync(User);
             if (usuario == null)
@@ -133,11 +173,37 @@ namespace ApiSpaDemo.Controllers
                 return Unauthorized();
             }
 
-            var reservas = await _context.Reserva
+            List<Reserva> reservas = new();
+            if (conTurnos && conPago)
+            {
+                reservas = await _context.Reserva
+                .Where(pag => pag.ClienteId == usuario.Id)
+                .Include(p => p.Turnos)
+                .Include(p => p.Pago)
+                .ToListAsync();
+            }
+            else if (conTurnos)
+            {
+                reservas = await _context.Reserva
+                .Where(pag => pag.ClienteId == usuario.Id)
+                .Include(p => p.Turnos)
+                .ToListAsync();
+            }
+            else if (conPago)
+            {
+                reservas = await _context.Reserva
+                .Where(pag => pag.ClienteId == usuario.Id)
+                .Include(p => p.Pago)
+                .ToListAsync();
+            }
+            else
+            {
+                reservas = await _context.Reserva
                 .Where(pag => pag.ClienteId == usuario.Id)
                 .ToListAsync();
-            var reservasSimplesDTO = _mapper.Map<List<ReservaSimpleDTO>>(reservas);
+            }
 
+            var reservasSimplesDTO = _mapper.Map<List<ReservaSimpleDTO>>(reservas);
             return Ok(reservasSimplesDTO);
         }
 
@@ -165,7 +231,7 @@ namespace ApiSpaDemo.Controllers
 
         // GET: api/Reserva/5
         // Obtiene una reserva especifica del usuario autenticado
-        [HttpGet("reservaAuthUser")]
+        [HttpGet("reservaAuthUser/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
