@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Generar PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+    <title>Factura Dinámica</title>
+
+
+    <!-- ----------------------------------------------------------- -->
+
+    <!--                Estilo de la factura                         -->
+
+    <!-- ----------------------------------------------------------- -->
+
+    
+    <style>
+        /* El mismo estilo de factura que antes */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .invoice-box {
+            max-width: 800px;
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #eee;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            font-size: 16px;
+            line-height: 24px;
+            color: #555;
+        }
+        .invoice-box table {
+            width: 100%;
+            line-height: inherit;
+            text-align: left;
+        }
+        .invoice-box table td {
+            padding: 5px;
+            vertical-align: top;
+        }
+        .invoice-box table tr td:nth-child(2) {
+            text-align: right;
+        }
+        .invoice-box table tr.top table td {
+            padding-bottom: 20px;
+        }
+        .invoice-box table tr.top table td.title {
+            font-size: 45px;
+            line-height: 45px;
+            color: #333;
+        }
+        .invoice-box table tr.information table td {
+            padding-bottom: 40px;
+        }
+        .invoice-box table tr.heading td {
+            background: #eee;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+        }
+        .invoice-box table tr.details td {
+            padding-bottom: 20px;
+        }
+        .invoice-box table tr.item td {
+            border-bottom: 1px solid #eee;
+        }
+        .invoice-box table tr.item.last td {
+            border-bottom: none;
+        }
+        .invoice-box table tr.total td:nth-child(2) {
+            border-top: 2px solid #eee;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    
+    <!-- ----------------------------------------------------------- -->
+
+    <!--                Formulario para ingresar datos               -->
+
+    <!-- ----------------------------------------------------------- -->
+
+    <!-- Formulario para ingresar datos -->
+    <div>
+        <h2>Ingresa los detalles de la factura</h2>
+        <label>Nombre del cliente:</label>
+        <input type="text" id="cliente" placeholder="Juan Pérez"><br><br>
+
+        <label>Email del cliente:</label>
+        <input type="text" id="email" placeholder="juan.perez@example.com"><br><br>
+
+        <label>Fecha de la factura:</label>
+        <input type="date" id="fecha"><br><br>
+
+        <label>Número de factura:</label>
+        <input type="text" id="numFactura" placeholder="12345"><br><br>
+
+        <label>Producto 1:</label>
+        <input type="text" id="producto1" placeholder="Producto A">
+        <label>Precio:</label>
+        <input type="text" id="precio1" placeholder="300.00"><br><br>
+
+        <label>Producto 2:</label>
+        <input type="text" id="producto2" placeholder="Producto B">
+        <label>Precio:</label>
+        <input type="text" id="precio2" placeholder="150.00"><br><br>
+
+        <button onclick="generarFactura()">Generar Factura</button>
+    </div>
+
+
+
+    <!-- ----------------------------------------------------------- -->
+
+    <!--                Estructura de la factura                     -->
+
+    <!-- ----------------------------------------------------------- -->
+    
+    <div id="invoice" class="invoice-box" style="display:none">
+        <table cellpadding="0" cellspacing="0">
+            <tr class="top">
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td class="title">
+
+                                <h3>Factura</h3>
+                            </td>
+                            <td>
+                                Fecha: <span id="fechaFactura"></span><br>
+                                Número de factura: <span id="numFacturaDisplay"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr class="information">
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td>
+                                Cliente: <span id="nombreCliente"></span><br>
+                                <span id="emailCliente"></span>
+                            </td>
+                            <td>
+                                Empresa Ejemplo, Inc.<br>
+                                123 Calle Falsa<br>
+                                Ciudad, País
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr class="heading">
+                <td>Descripción</td>
+                <td>Precio</td>
+            </tr>
+
+            <tr class="item">
+                <td><span id="producto1Display"></span></td>
+                <td>$<span id="precio1Display"></span></td>
+            </tr>
+
+            <tr class="item last">
+                <td><span id="producto2Display"></span></td>
+                <td>$<span id="precio2Display"></span></td>
+            </tr>
+
+            <tr class="total">
+                <td></td>
+                <td>Total: $<span id="total"></span></td>
+            </tr>
+        </table>
+    </div>
+
+
+
+    <!-- ----------------------------------------------------------- -->
+
+    <!-- Javascript Script para generar una factura visible -->
+
+    <!-- ----------------------------------------------------------- -->
+
+
+    <script>
+        function generarFactura() {
+            // Obtener valores del formulario
+            const cliente = document.getElementById('cliente').value;
+            const email = document.getElementById('email').value;
+            const fecha = document.getElementById('fecha').value;
+            const numFactura = document.getElementById('numFactura').value;
+            const producto1 = document.getElementById('producto1').value;
+            const precio1 = parseFloat(document.getElementById('precio1').value) || 0;
+            const producto2 = document.getElementById('producto2').value;
+            const precio2 = parseFloat(document.getElementById('precio2').value) || 0;
+
+            // Mostrar los valores en la factura
+            document.getElementById('nombreCliente').textContent = cliente;
+            document.getElementById('emailCliente').textContent = email;
+            document.getElementById('fechaFactura').textContent = fecha;
+            document.getElementById('numFacturaDisplay').textContent = numFactura;
+
+            document.getElementById('producto1Display').textContent = producto1;
+            document.getElementById('precio1Display').textContent = precio1.toFixed(2);
+
+            document.getElementById('producto2Display').textContent = producto2;
+            document.getElementById('precio2Display').textContent = precio2.toFixed(2);
+
+            // Calcular total
+            const total = precio1 + precio2;
+            document.getElementById('total').textContent = total.toFixed(2);
+
+            // Mostrar la factura
+            document.getElementById('invoice').style.display = 'block';
+
+            // Autogenerar y descargar PDF
+            const element = document.getElementById('invoice');
+            html2pdf().from(element).save(cliente+'factura.pdf');
+        }
+    </script>
+
+</body>
+</html>
