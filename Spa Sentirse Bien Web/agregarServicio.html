@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Servicio</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            margin: 0 auto;
+        }
+
+        label, input, select, button {
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #5fa510;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #4e8f10;
+        }
+    </style>
+</head>
+<body>
+    <h1>Agregar Servicio</h1>
+    <form id="formAgregarServicio">
+        <label for="usuarioId">ID del Empleado:</label>
+        <input type="text" id="usuarioId" name="usuarioId" required>
+
+        <label for="titulo">Título del Servicio:</label>
+        <input type="text" id="titulo" name="titulo" required>
+
+        <label for="tipoServicio">Tipo de Servicio:</label>
+        <input type="text" id="tipoServicio" name="tipoServicio" required>
+
+        <label for="descripcion">Descripción:</label>
+        <input type="text" id="descripcion" name="descripcion" required>
+
+        <label for="rutaImagen">Subir Imagen:</label>
+        <input type="file" id="rutaImagen" name="rutaImagen" accept="image/*" required>
+
+        <label for="duracionMinut">Duración en minutos:</label>
+        <input type="number" id="duracionMinut" name="duracionMinut" required>
+
+        <label for="precio">Precio:</label>
+        <input type="number" id="precio" name="precio" required>
+
+        <label for="duracionMinut">Tiempo Limite de Pago:</label>
+        <input type="number" id="tiempoLimiteHoras" name="tiempoLimiteHoras" required>
+
+        <button type="submit">Agregar Servicio</button>
+    </form>
+
+    <script src="./JS/agregarServicio.js"></script>
+</body>
+</html>

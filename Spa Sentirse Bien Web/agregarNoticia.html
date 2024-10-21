@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Noticia</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            margin: 0 auto;
+        }
+
+        label, input, button {
+            margin-bottom: 15px;
+        }
+
+        input[type="file"] {
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #5fa510;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #4e8f10;
+        }
+    </style>
+</head>
+<body>
+    <h1>Agregar Noticia</h1>
+    <form id="formAgregarNoticia">
+        <label for="titulo">Título de la Noticia:</label>
+        <input type="text" id="titulo" name="titulo" required>
+
+        <label for="rutaImagen">Subir Imagen:</label>
+        <input type="file" id="rutaImagen" name="rutaImagen" accept="image/*" required>
+
+        <label for="rutaPDF">Subir PDF:</label>
+        <input type="file" id="rutaPDF" name="rutaPDF" accept=".pdf" required>
+
+        <button type="submit">Agregar Noticia</button>
+    </form>
+
+    <script src="./JS/agregarNoticia.js"></script>
+</body>
+</html>

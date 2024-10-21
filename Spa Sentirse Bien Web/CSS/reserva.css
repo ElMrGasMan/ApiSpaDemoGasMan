@@ -1,0 +1,95 @@
+
+:root {
+    --verdeColor: #5fa510;
+    --verdeOscuroColor: #315012;
+    --rosaColor: #dc1659;
+    --rosaOscuro: #a11245;
+    --amarilloColor: #e1bc00;
+    --amarilloOscuro: #d29500;
+    --rosaClaro: rgb(248, 213, 219); 
+    --grisOscuro: #3c3c3c; 
+}
+
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: var(--rosaClaro); 
+    font-family: 'Arial', sans-serif; 
+}
+
+/* Estilos del contenedor */
+.contenedor {
+    background-color: var(--rosaColor); 
+    padding: 30px; 
+    border-radius: 12px; 
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); 
+    text-align: center; 
+    width: 350px; 
+    font-size: 16px; 
+    color: var(--amarilloColor); 
+    font-family: 'Arial', sans-serif;
+}
+
+
+h2 {
+    margin-bottom: 20px;
+    font-size: 24px; 
+    color: var(--amarilloColor); 
+    font-family: 'Verdana', sans-serif; 
+}
+
+/* Estilos para el input de fecha */
+input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    margin: 12px 0;
+    border-radius: 8px;
+    border: 1px solid #cccccc;
+    background-color: var(--rosaClaro); 
+    font-size: 16px; 
+    font-family: 'Courier New', monospace; 
+}
+
+/* Estilos para el select de la hora */
+select {
+    width: 100%;
+    padding: 12px;
+    margin: 12px 0;
+    border-radius: 8px;
+    border: 1px solid #cccccc;
+    background-color: var(--rosaClaro); 
+    color: black; 
+    font-size: 16px; 
+    font-family: 'Courier New', monospace; 
+}
+
+
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    background-color: var(--verdeOscuroColor); 
+    color: white; 
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px; 
+    font-family: 'Arial', sans-serif; 
+    transition: background-color 0.3s ease;
+}
+
+
+button:hover {
+    background-color: var(--verdeColor);
+}
+
+
+label {
+    color: var(--amarilloColor); 
+    font-size: 14px; 
+    font-family: 'Verdana', sans-serif; 
+}
