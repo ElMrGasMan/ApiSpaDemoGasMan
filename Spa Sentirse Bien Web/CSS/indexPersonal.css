@@ -1,0 +1,235 @@
+:root {
+    --verdeColor: #5fa510;
+    --verdeOscuroColor: #315012;
+    --rosaColor: #dc1659;
+    --rosaOscuro: #a11245;
+    --amarilloColor: #e1bc00;
+    --amarilloOscuro: #d29500;
+    --rosaClaro: rgb(248, 213, 219); 
+    --grisOscuro: #3c3c3c; 
+}
+/*++++++++++++++++++++++++++++++++++*/
+/*+++++++ Estilos generales +++++++*/
+/*++++++++++++++++++++++++++++++++*/
+
+body {
+    margin: 0;
+    overflow-x: hidden;
+}
+/*+++++++++++++++++++++++++++++++++++++++*/
+/*+++++++ Estilos del encabezado +++++++*/
+/*+++++++++++++++++++++++++++++++++++++*/
+
+header {
+    
+    background-color: var(--rosaOscuro);
+}
+nav {
+    position:fixed;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--rosaOscuro);
+    width: 100%;
+    top: 0;
+    z-index: 2;
+}
+
+.nav-left {
+
+    display: flex;
+    align-items: center;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-left: auto;
+}
+/*--------------------------------------------------------------------------------------------------*/
+/* Configuración del checkbox (las tres ralllitas para abrir y cerrar la barara lateral izquierda) */
+/*------------------------------------------------------------------------------------------------*/
+
+#checkbox {
+    display: none;
+}
+  
+.toggle {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition-duration: .3s;
+    z-index: 2;
+}
+  
+.bars {
+    width: 100%;
+    height: 4px;
+    background-color: var(--amarilloColor);
+    border-radius: 5px;
+    transition-duration: .3s;
+}
+
+#checkbox:checked + .toggle #bar2 {
+    transform: translateY(14px) rotate(60deg);
+    margin-left: 0;
+    transform-origin: right;
+    transition-duration: .3s;
+    z-index: 2;
+}
+  
+#checkbox:checked + .toggle #bar1 {
+    transform: translateY(28px) rotate(-60deg);
+    transition-duration: .3s;
+    transform-origin: left;
+    z-index: 1;
+}
+  
+#checkbox:checked + .toggle {
+    transform: rotate(-90deg);
+}
+/*--------------------------------------------*/
+/*configuracion del la barra lateral izquiera*/
+/*------------------------------------------*/
+
+.barraOpciones {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: var(--rosaOscuro);
+    overflow-x: hidden;
+    transition: width 0.2s ease;
+    padding-top: 60px;
+}
+
+.barraOpciones a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: var(--amarilloColor);
+    display: block;
+}
+
+/*------------------------------------------------------------------------*/
+/*acciones para que se desplacen segun se abre la barra lateral izquierda*/
+/*----------------------------------------------------------------------*/
+
+.menu-abierto #barraOpciones {
+    width: 250px;
+}
+#div_Main {
+    transition: margin-left 0.3s ease;
+    
+}
+.menu-abierto #div_Main {
+    margin-left: 250px;
+}
+#div_logo{
+    transition: margin-left 0.3s ease;
+}
+.menu-abierto #div_logo{
+    margin-left: 190px;
+
+}
+/*-----------------------*/
+/*configuracion del logo*/
+/*---------------------*/
+
+.div_logo img {
+    height: 50px;
+    margin-left: 60px;
+}
+
+/*---------------------------------------*/
+/*animacion de campana de notificaciones*/
+/*-------------------------------------*/
+
+.container {
+    --color: var(--amarilloColor);
+    --size: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    font-size: var(--size);
+    user-select: none;
+    fill: var(--color);
+}
+
+.container .bell-regular {
+    position: absolute;
+    animation: keyframes-fill .5s;
+}
+
+.container .bell-solid {
+    position: absolute;
+    display: none;
+    animation: keyframes-fill .5s;
+}
+
+.container input:checked ~ .bell-regular {
+    display: none;
+}
+
+.container input:checked ~ .bell-solid {
+    display: block;
+}
+
+.container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+@keyframes keyframes-fill {
+    0% {
+      opacity: 0;
+    }
+  
+    25% {
+      transform: rotate(25deg);
+    }
+  
+    50% {
+      transform: rotate(-20deg) scale(1.2);
+    }
+  
+    75% {
+      transform: rotate(15deg);
+    }
+}
+/*------------------------------------*/
+/*configuracion del nombre de usuario*/
+/*----------------------------------*/
+.div_Nombre_Usuario h1 {
+    margin: 0;
+    color: var(--amarilloColor);
+    margin-right: 10px;
+}
+
+/**************************/
+/*****Estilos de Main*****/
+/************************/
+.div_Main {
+    margin-top: 54px;
+    background-color: var(--rosaClaro); 
+}
+.div_imagenSinTexto img{
+    max-width: 100%;
+    height: 100%;
+}
