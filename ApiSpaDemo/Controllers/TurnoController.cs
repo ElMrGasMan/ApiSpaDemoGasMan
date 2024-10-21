@@ -80,7 +80,7 @@ namespace ApiSpaDemo.Controllers
             await _context.SaveChangesAsync();
 
             TurnoDTO turnoToReturn = _mapper.Map<TurnoDTO>(turno);
-            return CreatedAtAction(nameof(GetTurno), new { id = turnoToReturn.IdTurno }, turnoToReturn);
+            return CreatedAtAction(nameof(GetTurno), new { id = turnoToReturn.TurnoId }, turnoToReturn);
         }
 
         // DELETE: api/Turno/5

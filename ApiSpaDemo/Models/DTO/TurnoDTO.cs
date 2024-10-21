@@ -6,7 +6,7 @@ namespace ApiSpaDemo.Models.DTO
     public class TurnoDTO
     {
         [Key]
-        public int IdTurno { get; set; }
+        public int TurnoId { get; set; }
 
         [Required]
         public int ServicioId { get; set; }
