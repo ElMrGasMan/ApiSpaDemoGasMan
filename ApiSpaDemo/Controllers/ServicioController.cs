@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Cors;
 
 namespace ApiSpaDemo.Controllers
 {
-    [EnableCors("ReglasCors")]
+    [EnableCors("PermitirTodo")]
     [Route("api/[controller]")]
     [ApiController]
     public class ServicioController : ControllerBase
@@ -93,6 +93,34 @@ namespace ApiSpaDemo.Controllers
             var servicioDTO = _mapper.Map<ServicioDTO>(servicio);
             return servicioDTO;
         }
+
+
+        // GET: api/Servicio/5
+        // Obtiene los servicios de un usuario en especifico, con o sin los Turnos.
+        [HttpGet("getServiciosEmpleado/{usuarioId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ServicioDTO>> GetServicioEmpleado(string usuarioId, bool conTurnos)
+        {
+            if (string.IsNullOrWhiteSpace(usuarioId))
+            {
+                return BadRequest("No se especifico un ID de usuario.");
+            }
+
+            IQueryable<Servicio> query = _context.Servicio.Where(s => s.UsuarioId == usuarioId);
+
+            if (conTurnos) 
+                query = _context.Servicio.Include(s => s.Turnos);
+            
+            var servicios = await query.ToListAsync();
+
+            if (servicios == null || servicios.Count == 0) 
+                return NotFound("No se encontró ningun servicio o el empleado no tiene asignado ninguno.");
+
+            var serviciosDTO = _mapper.Map<List<ServicioDTO>>(servicios);
+            return Ok(serviciosDTO);
+        }
+
 
         // PUT: api/Servicio/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

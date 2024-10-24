@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace ApiSpaDemo.Controllers
 {
-    [EnableCors("ReglasCors")]
+    [EnableCors("PermitirTodo")]
     [Route("api/[controller]")]
     [ApiController]
     public class PreguntaController : ControllerBase

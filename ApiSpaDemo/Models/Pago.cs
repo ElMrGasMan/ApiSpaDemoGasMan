@@ -19,13 +19,13 @@ namespace ApiSpaDemo.Models
         [ForeignKey("ReservaId")]
         public Reserva? ReservaClass { get; set; }
 
-        [Required]
-        public string FormatoPago { get; set; } = "";
+        public string? FormatoPago { get; set; }
         [Required]
         [DataType(DataType.Currency)]
         public decimal MontoTotal { get; set; }
         [Required]
         public bool Pagado { get; set; } // Indicador de si el pago fue confirmado
-
+        [DataType(DataType.DateTime)]
+        public DateTime? FechaPagado { get; set; }
     }
 }

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ApiSpaDemo.Controllers
 {
-    [EnableCors("ReglasCors")]
+    [EnableCors("PermitirTodo")]
     [ApiController]
     [Route("api/[controller]")]
     public class MensajePrivadoController : ControllerBase

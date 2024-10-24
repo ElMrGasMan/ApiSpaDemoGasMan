@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ApiSpaDemo.Controllers
 {
-    [EnableCors("ReglasCors")]
+    [EnableCors("PermitirTodo")]
     [Route("api/[controller]")]
     [ApiController]
     public class ReservaController : ControllerBase
@@ -63,7 +63,7 @@ namespace ApiSpaDemo.Controllers
         // Verifica todas las reservas, que los turnos no hayan pasado el limite y no esten pagados.
         [HttpGet("verificacionPagoDeReservas")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<ReservaDTO>>> GetReservaTurnosVerfic()
+        public async Task<ActionResult<IEnumerable<ReservaDTO>>> GetReservaTurnosVerific()
         {
             // Obtener todas las reservas que no tienen pago confirmado
             var reservasSinPago = await _context.Reserva
@@ -265,11 +265,15 @@ namespace ApiSpaDemo.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<ReservaSimpleDTO>> PostReserva(ReservaSimpleDTO reservaSimpleDTO, decimal monto, string formatoPago)
+        public async Task<ActionResult<ReservaSimpleDTO>> PostReserva(ReservaSimpleDTO reservaSimpleDTO, decimal monto, string formatoPago = "")
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+            if (String.IsNullOrWhiteSpace(formatoPago))
+            {
+                formatoPago = "No elegido";
             }
 
             var usuario = await _userManager.GetUserAsync(User);
@@ -300,7 +304,7 @@ namespace ApiSpaDemo.Controllers
 
         // PUT: api/Reserva
         // Agrega un nuevo turno a la Reserva
-        [HttpPut("agregarTurnoAReserva/{idReserva}")]
+        [HttpPut("agregarTurnoAReserva_actualizarPago/{idReserva}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -309,6 +313,7 @@ namespace ApiSpaDemo.Controllers
         {
             var reserva = await _context.Reserva
                 .Include(r => r.Turnos) // Incluir los turnos 
+                .Include(r => r.Pago) // Incluir el pago
                 .FirstOrDefaultAsync(r => r.ReservaId == idReserva);
 
             if (reserva == null)
@@ -328,8 +333,19 @@ namespace ApiSpaDemo.Controllers
                 return BadRequest($"El turno con ID {idTurno} ya está asignado a una reserva.");
             }
 
+            var servicio = await _context.Servicio.FindAsync(turno.ServicioId);
+            if (servicio == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error: No se ha podido encontrar el Servicio del turno.");
+            }
+            if (reserva.Pago == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error: La reserva no tiene un Pago asignado.");
+            }
+
             turno.ReservaId = idReserva;
             reserva.Turnos.Add(turno);
+            reserva.Pago.MontoTotal += servicio.Precio;
 
             try
             {
@@ -346,7 +362,7 @@ namespace ApiSpaDemo.Controllers
 
         // PUT: api/Reserva
         // Elimina un turno de la Reserva
-        [HttpPut("eliminarTurnoAReserva/{idReserva}")]
+        [HttpPut("eliminarTurnoAReserva_actualizarPago/{idReserva}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -367,8 +383,19 @@ namespace ApiSpaDemo.Controllers
                 return NotFound($"No se encontró un turno con el ID {idTurno}");
             }
 
+            var servicio = await _context.Servicio.FindAsync(turno.ServicioId);
+            if (servicio == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error: No se ha podido encontrar el Servicio del turno.");
+            }
+            if (reserva.Pago == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error: La reserva no tiene un Pago asignado.");
+            }
+
             reserva.Turnos.Remove(turno);
             turno.ReservaId = null;
+            reserva.Pago.MontoTotal -= servicio.Precio;
 
             try
             {
@@ -380,6 +407,68 @@ namespace ApiSpaDemo.Controllers
             }
 
             return Ok($"El turno con ID {idTurno} ha sido eliminado a la reserva con ID {idReserva}");
+        }
+
+
+        // PUT: api/Reserva
+        // Toma un Turno de una Reserva y se la pasa a otra Reserva
+        [HttpPut("cambiarTurnoDeReserva/{idTurno}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CambiarTurnoDeReserva(int idReservaOriginal, int idTurno, int idReservaNueva)
+        {
+            Reserva? reservaVieja = await _context.Reserva
+                .Include(r => r.Turnos)
+                .FirstOrDefaultAsync(r => r.ReservaId == idReservaOriginal);
+
+            if (reservaVieja == null)
+            {
+                return NotFound($"No se encontró una reserva con el ID {idReservaOriginal}.");
+            }
+
+            Reserva? reservaNueva = await _context.Reserva
+                .Include(r => r.Turnos)
+                .FirstOrDefaultAsync(r => r.ReservaId == idReservaNueva);
+
+            if (reservaNueva == null)
+            {
+                return NotFound($"No se encontró una reserva con el ID {idReservaNueva}.");
+            }
+
+            Turno? turno = await _context.Turno.FindAsync(idTurno);
+            if (turno == null)
+            {
+                return NotFound($"No se encontró un turno con el ID {idTurno}");
+            }
+
+            Servicio? servicio = await _context.Servicio.FindAsync(turno.ServicioId);
+            if (servicio == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error: No se ha podido encontrar el Servicio del turno.");
+            }
+            if (reservaVieja.Pago == null || reservaNueva.Pago == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error: Una o ambas de las reservas no tiene un Pago asignado.");
+            }
+
+            reservaVieja.Turnos.Remove(turno);
+            turno.ReservaId = idReservaNueva;
+            reservaNueva.Turnos.Add(turno);
+
+            reservaVieja.Pago.MontoTotal -= servicio.Precio;
+            reservaNueva.Pago.MontoTotal += servicio.Precio;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error al actualizar las reservas: {ex.Message}");
+            }
+
+            return Ok($"El turno con ID {idTurno} cambiado de la reserva con ID {idReservaOriginal}, a la reserva con ID {idReservaNueva}");
         }
 
 

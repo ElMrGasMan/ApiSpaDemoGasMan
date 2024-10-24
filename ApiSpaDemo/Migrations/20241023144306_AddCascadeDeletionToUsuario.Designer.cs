@@ -4,6 +4,7 @@ using ApiSpaDemo.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApiSpaDemo.Migrations
 {
     [DbContext(typeof(ApiSpaDbContext))]
-    partial class ApiSpaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241023144306_AddCascadeDeletionToUsuario")]
+    partial class AddCascadeDeletionToUsuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,30 +47,6 @@ namespace ApiSpaDemo.Migrations
                     b.HasIndex("UsuarioId");
 
                     b.ToTable("ChatPrivado");
-                });
-
-            modelBuilder.Entity("ApiSpaDemo.Models.HorarioServicio", b =>
-                {
-                    b.Property<int>("HorarioServicioId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HorarioServicioId"));
-
-                    b.Property<TimeOnly>("HoraFinal")
-                        .HasColumnType("time");
-
-                    b.Property<TimeOnly>("HoraInicio")
-                        .HasColumnType("time");
-
-                    b.Property<int?>("ServicioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("HorarioServicioId");
-
-                    b.HasIndex("ServicioId");
-
-                    b.ToTable("HorarioServicio");
                 });
 
             modelBuilder.Entity("ApiSpaDemo.Models.MensajePrivado", b =>
@@ -167,10 +146,8 @@ namespace ApiSpaDemo.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PagoId"));
 
-                    b.Property<DateTime?>("FechaPagado")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("FormatoPago")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("MontoTotal")
@@ -604,15 +581,6 @@ namespace ApiSpaDemo.Migrations
                     b.Navigation("UsuarioClass");
                 });
 
-            modelBuilder.Entity("ApiSpaDemo.Models.HorarioServicio", b =>
-                {
-                    b.HasOne("ApiSpaDemo.Models.Servicio", "Servicio")
-                        .WithMany("Horarios")
-                        .HasForeignKey("ServicioId");
-
-                    b.Navigation("Servicio");
-                });
-
             modelBuilder.Entity("ApiSpaDemo.Models.MensajePrivado", b =>
                 {
                     b.HasOne("ApiSpaDemo.Models.ChatPrivado", "ChatPrivado")
@@ -805,8 +773,6 @@ namespace ApiSpaDemo.Migrations
             modelBuilder.Entity("ApiSpaDemo.Models.Servicio", b =>
                 {
                     b.Navigation("ChatsPrivados");
-
-                    b.Navigation("Horarios");
 
                     b.Navigation("Turnos");
                 });

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ApiSpaDemo.Controllers
 {
-    [EnableCors("ReglasCors")]
+    [EnableCors("PermitirTodo")]
     [ApiController]
     [Route("api/[controller]")]
     public class ContactController : ControllerBase
@@ -37,7 +37,7 @@ namespace ApiSpaDemo.Controllers
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpPost("sendcv")]
+        [HttpPost("sendConArchivo")]
         public async Task<IActionResult> SendEmailWithAttachment([FromForm] FormContactoModel model, IFormFile cv)
         {
             if (cv == null || cv.Length == 0) return BadRequest("Debe adjuntar un archivo.");

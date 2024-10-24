@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ApiSpaDemo.Models;
+using ApiSpaDemo.Models.DTO;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -33,11 +34,23 @@ namespace ApiSpaDemo.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            Usuario? verificacion = await _userManager.FindByEmailAsync(model.Email);
+            if (verificacion != null)
+            {
+                return BadRequest("El correo electronico ya está registrado.");
+            }
+
+            verificacion = await _userManager.FindByNameAsync(model.Username);
+            if (verificacion != null)
+            {
+                return BadRequest("Este nombre de usuario ya esta en uso.");
+            }
+
             try
             {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
-
                 Usuario user = new Usuario
                 {
                     UserName = model.Username,
@@ -68,6 +81,18 @@ namespace ApiSpaDemo.Controllers
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
+
+                Usuario? verificacion = await _userManager.FindByEmailAsync(model.Email);
+                if (verificacion != null)
+                {
+                    return BadRequest("El correo electronico ya está registrado.");
+                }
+
+                verificacion = await _userManager.FindByNameAsync(model.Username);
+                if (verificacion != null)
+                {
+                    return BadRequest("Este nombre de usuario ya esta en uso.");
+                }
 
                 Usuario user = new Usuario
                 {
@@ -137,6 +162,8 @@ namespace ApiSpaDemo.Controllers
 
             return Unauthorized("Invalid login attempt.");
         }
+
+
         [EnableCors("PermitirTodo")]
         [HttpPost("logout")]
         [Authorize]
@@ -156,6 +183,41 @@ namespace ApiSpaDemo.Controllers
                 _logger.LogError(ex, "Error en el logout");
                 return StatusCode(500, new { message = "Internal server error", error = ex.Message });
             }
+        }
+
+
+        //Permite al usuario cambiar su contraseña.
+        [EnableCors("PermitirTodo")]
+        [HttpPost("cambiarContraseña")]
+        [Authorize]
+        public async Task<IActionResult> CambiarContrasenia([FromBody] CambiarContraDTO model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Unauthorized("El usuario no se encuentra autenticado.");
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                return BadRequest(ModelState);
+            }
+
+            // Si el cambio de contraseña fue exitoso, se refresca la sesión.
+            await _signInManager.RefreshSignInAsync(user);
+
+            return Ok("Contraseña cambiada exitosamente.");
         }
     }
 }

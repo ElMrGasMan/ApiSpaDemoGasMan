@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace ApiSpaDemo.Controllers
 {
-    [EnableCors("ReglasCors")]
+    [EnableCors("PermitirTodo")]
     [Route("api/[controller]")]
     [ApiController]
     public class PagoController : ControllerBase
@@ -31,8 +31,8 @@ namespace ApiSpaDemo.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<PagoDTO>>> GetPagos()
         {
-            var pagos = await _context.Pago.ToListAsync();
-            var pagosDTO = _mapper.Map<List<PagoDTO>>(pagos);
+            List<Pago> pagos = await _context.Pago.ToListAsync();
+            List<PagoDTO> pagosDTO = _mapper.Map<List<PagoDTO>>(pagos);
             return Ok(pagosDTO);
         }
 
@@ -59,14 +59,31 @@ namespace ApiSpaDemo.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<PagoDTO>>> GetPagosUsuario(string usuarioId)
         {
-            var pagos = await _context.Pago
+            List<Pago> pagos = await _context.Pago
                                    .Where(pag => pag.UsuarioId == usuarioId)
                                    .ToListAsync();
-            var pagosDTO = _mapper.Map<List<PagoDTO>>(pagos);
+            List<PagoDTO> pagosDTO = _mapper.Map<List<PagoDTO>>(pagos);
             return Ok(pagosDTO);
         }
 
 
+        // GET: api/Pago/getPago/5
+        // Obtiene un pago en especifico
+        [HttpGet("getPago/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<PagoDTO>>> GetPago(int id)
+        {
+            Pago? pago = await _context.Pago.FindAsync(id);
+            if (pago == null)
+            {
+                return BadRequest($"No se encontró el Pago con el ID: {id}.");
+            }
+
+            PagoDTO pagoDTO = _mapper.Map<PagoDTO>(pago);
+            return Ok(pagoDTO);
+        }
+
+        /*
         // PATCH: api/Pago/5
         // Suma o Resta al monto total del Pago: 1 para sumar, 0 para restar.
         // MUY IMPORTANTE: ACORDARSE DE LLAMAR ESTE ENDPOINT A LA HORA DE QUE SE ELIMINE O AGREGUE UN 
@@ -78,7 +95,7 @@ namespace ApiSpaDemo.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<PagoDTO>>> SumarRestarPago(int id, short action, decimal monto)
         {
-            var pago = await _context.Pago.FindAsync(id);
+            Pago? pago = await _context.Pago.FindAsync(id);
             if (pago == null)
             {
                 return NotFound();
@@ -111,19 +128,24 @@ namespace ApiSpaDemo.Controllers
 
             return Ok($"El monto total del pago con ID {id} se ha actualizado a {pago.MontoTotal}.");
         }
+        */
 
+        
         // PATCH: api/Pago/5
-        // Establece el Pago como Pagado o no.
-        [HttpPatch("establecerEstPago/{id}")]
+        // Establece el Pago como Pagado.
+        [HttpPatch("establecerPagado/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<PagoDTO>>> EstablecerEstadoPago(int id, bool estado)
+        public async Task<ActionResult<IEnumerable<PagoDTO>>> EstablecerEstadoPago(int id)
         {
-            var pago = await _context.Pago.FindAsync(id);
-            if (pago == null) return NotFound();
-            
-            pago.Pagado = estado;
+            Pago? pago = await _context.Pago.FindAsync(id);
+            if (pago == null) return NotFound($"El Pago con ID: {id}, no fue encontrado.");
+
+            if (pago.Pagado == true) return BadRequest($"Este Pago con ID: {id}, ya fue pagado anteriormente.");
+
+            pago.Pagado = true;
+            pago.FechaPagado = DateTime.Now;
 
             try
             {
@@ -134,7 +156,7 @@ namespace ApiSpaDemo.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Error al actualizar el pago: {ex.Message}");
             }
 
-            return Ok($"El estado del pago con ID {id} se ha actualizado a " + (estado ? "Pagado." : "No Pagado."));
+            return Ok($"El estado del pago con ID: {id}, se ha indicado como pagado.");
         }
 
 
@@ -144,7 +166,7 @@ namespace ApiSpaDemo.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeletePago(int id)
         {
-            var pago = await _context.Pago.FindAsync(id);
+            Pago? pago = await _context.Pago.FindAsync(id);
             if (pago == null)
             {
                 return NotFound();

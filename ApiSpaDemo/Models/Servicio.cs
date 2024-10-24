@@ -20,6 +20,9 @@ namespace ApiSpaDemo.Models
         // Relación con Turnos
         public ICollection<Turno> Turnos { get; set; } = [];
 
+        // Relacion con Horarios
+        public ICollection<HorarioServicio> Horarios { get; set; } = [];
+
         [Required]
         [MaxLength(50, ErrorMessage="El nombre del tipo no puede exceder 50 caracteres.")]
         public string? TipoServicio { get; set; }

@@ -22,7 +22,10 @@ namespace ApiSpaDemo
 
             builder.Services.AddCors(opt =>
             {
-                opt.AddPolicy("PermitirTodo", builder => { builder.WithOrigins("http://127.0.0.1:5500", "http://www.ApiSpaDemo.somee.com").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+                opt.AddPolicy("PermitirTodo", builder =>
+                {
+                    builder.WithOrigins("http://localhost:5500", "http://127.0.0.1:5500", "http://www.ApiSpaDemo.somee.com", "https://spa-sentirse-bien-g2.netlify.app")
+                    .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
                 });
             });
 
@@ -64,6 +67,8 @@ namespace ApiSpaDemo
             builder.Services.AddAuthorization();
             builder.Services.AddIdentity<Usuario, IdentityRole>(options =>
             {
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+ ";
+                options.User.RequireUniqueEmail = true;
                 options.SignIn.RequireConfirmedAccount = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireDigit = false;
@@ -82,8 +87,10 @@ namespace ApiSpaDemo
             app.UseSwagger();
             app.UseSwaggerUI();
 
-            app.UseHttpsRedirection();
             app.UseCors("PermitirTodo");
+
+            app.UseHttpsRedirection();
+
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -119,7 +126,7 @@ namespace ApiSpaDemo
                         Email = email
                     };
 
-                    await userManager.CreateAsync(user, "835NoOneAdmin047-");
+                    await userManager.CreateAsync(user, "NoOneAdmin");
                     await userManager.AddToRoleAsync(user, "Admin");
                 }
             }

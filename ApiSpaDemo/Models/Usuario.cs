@@ -18,7 +18,6 @@ namespace ApiSpaDemo.Models
         [Required]
         public ICollection<Respuesta> Respuestas { get; set; } = [];
 
-        // Relación con ChatPrivado (muchos a muchos)
         public ICollection<ChatPrivado> ChatsPrivados { get; set; } = [];
 
         public ICollection<Notificacion> Notificaciones { get; set; } = [];

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Cors;
 
 namespace ApiSpaDemo.Controllers
 {
-    [EnableCors("ReglasCors")]
+    [EnableCors("PermitirTodo")]
     [Route("api/[controller]")]
     [ApiController]
     public class NoticiaController : ControllerBase

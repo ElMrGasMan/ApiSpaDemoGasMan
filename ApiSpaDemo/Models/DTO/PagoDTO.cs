@@ -16,5 +16,6 @@ namespace ApiSpaDemo.Models.DTO
         [DataType(DataType.Currency)]
         public decimal MontoTotal { get; set; }
         public bool Pagado { get; set; } // Indicador de si el pago fue confirmado
+        public DateTime? FechaPagado { get; set; }
     }
 }

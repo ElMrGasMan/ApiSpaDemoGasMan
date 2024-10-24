@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ApiSpaDemo.Controllers
 {
-    [EnableCors("ReglasCors")]
+    [EnableCors("PermitirTodo")]
     [Route("api/[controller]")]
     [ApiController]
     public class TurnoController : ControllerBase
@@ -33,7 +33,7 @@ namespace ApiSpaDemo.Controllers
             return Ok(turnoDTO);
         }
 
-        
+        /*
         // GET: api/Turno
         // Obtiene todos los turnos de forma limitada.
         [HttpGet("allTurnosLimited")]
@@ -46,6 +46,33 @@ namespace ApiSpaDemo.Controllers
                 .ToListAsync();
             List<TurnoDTO> turnoDTO = _mapper.Map<List<TurnoDTO>>(turno);
             return Ok(turnoDTO);
+        }
+        */
+
+
+        // PATCH: api/Turno
+        // Cambia la descripcion de un turno en especifico
+        [HttpPatch("cambiarDescripcion/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<TurnoDTO>>> GetTurnoServ(int id, string nuevaDescripcion)
+        {
+            Turno? turno = await _context.Turno.FindAsync(id);
+            if (turno == null)
+            {
+                return BadRequest($"No se encontró un Turno con el ID: {id}.");
+            }
+
+            turno.Descripcion = nuevaDescripcion;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error al actualizar el Turno: {ex.Message}");
+            }
+
+            return NoContent();
         }
 
 

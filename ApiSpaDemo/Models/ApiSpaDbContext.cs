@@ -28,6 +28,7 @@ public partial class ApiSpaDbContext : IdentityDbContext<Usuario, IdentityRole, 
     public DbSet<Pago> Pago { get; set; } = default!;
     public DbSet<Reserva> Reserva { get; set; } = default!;
     public DbSet<Turno> Turno { get; set; } = default!;
+    public DbSet<HorarioServicio> HorarioServicio { get; set; } = default!;
     public DbSet<Notificacion> Notificacion { get; set; } = default!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
@@ -42,6 +43,37 @@ public partial class ApiSpaDbContext : IdentityDbContext<Usuario, IdentityRole, 
             entity.Property(e => e.RutaPdf).HasColumnName("RutaPDF");
             entity.Property(e => e.Titulo).HasMaxLength(50);
         });
+
+
+        // CASCADAS DE USUARIO===========================================
+
+        //Chats
+        modelBuilder.Entity<Usuario>()
+            .HasMany(u => u.ChatsPrivados)
+            .WithOne(c => c.UsuarioClass) 
+            .OnDelete(DeleteBehavior.Cascade); 
+        //Mensajes
+        modelBuilder.Entity<Usuario>()
+            .HasMany(u => u.MensajesPrivados)
+            .WithOne(m => m.Usuario) 
+            .OnDelete(DeleteBehavior.Cascade);
+        //Notificaciones
+        modelBuilder.Entity<Usuario>()
+            .HasMany(u => u.Notificaciones)
+            .WithOne(n => n.UsuarioClass) 
+            .OnDelete(DeleteBehavior.Cascade);
+        //Respuestas
+        modelBuilder.Entity<Usuario>()
+            .HasMany(u => u.Respuestas)
+            .WithOne(r => r.UsuarioClass) 
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // CASCADAS DE USUARIO===========================================
+
+        modelBuilder.Entity<ChatPrivado>()
+            .HasMany(c => c.Mensajes)
+            .WithOne(m => m.ChatPrivado)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Reserva>()
         .HasOne(r => r.Cliente)        
