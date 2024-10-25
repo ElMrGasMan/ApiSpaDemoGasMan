@@ -40,22 +40,28 @@ namespace ApiSpaDemo.Controllers
         }
 
         // GET: api/Servicio/tipo/{tipo}
-        // Obtiene un servicio de un determinado tipo
+        // Obtiene los servicios de un determinado tipo. Con o sin los turnos y con o sin los horarios.
         [HttpGet("tipo/{tipo}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<ServicioDTO>>> GetServicio([FromQuery] string tipo)
+        public async Task<ActionResult<IEnumerable<ServicioDTO>>> GetServicio(string tipo, bool conTurnos, bool conHorarios)
         {
-            if (tipo == null)
+            if (String.IsNullOrWhiteSpace(tipo))
             {
-                return BadRequest();
+                return BadRequest("No se especificó ningun tipo.");
             }
-            var servicios = await _context.Servicio.Where(s => s.TipoServicio == tipo).ToListAsync();
+
+            var query = _context.Servicio.Where(s => s.TipoServicio == tipo);
+
+            if (conTurnos) query = _context.Servicio.Include(s => s.Turnos);
+            if (conHorarios) query = _context.Servicio.Include(s => s.Horarios);
+
+            var servicios = await query.ToListAsync();
 
             if (servicios == null || servicios.Count == 0)
             {
-                return NotFound();
+                return NotFound("No se encontró ningun servicio con ese titulo.");
             }
 
             var servicioDtos = _mapper.Map<List<ServicioDTO>>(servicios);
@@ -63,31 +69,24 @@ namespace ApiSpaDemo.Controllers
         }
 
         // GET: api/Servicio/5
-        // Obtiene un servicio en específico, con o sin los Turnos.
+        // Obtiene un servicio en específico, con o sin los Turnos y con o sin los horarios.
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ServicioDTO>> GetServicio(int id, bool conTurnos)
+        public async Task<ActionResult<ServicioDTO>> GetServicio(int id, bool conTurnos, bool conHorarios)
         {
             if (id < 0)
             {
                 return BadRequest();
             }
 
-            Servicio? servicio;
+            IQueryable<Servicio> query = _context.Servicio.Where(s => s.ServicioId == id);
 
-            if (conTurnos)
-            {
-                servicio = await _context.Servicio
-                    .Include(s => s.Turnos)
-                    .FirstOrDefaultAsync(s => s.ServicioId == id);
-            }
-            else
-            {
-                servicio = await _context.Servicio.FindAsync(id);
-            }
+            if (conTurnos) query = _context.Servicio.Include(s => s.Turnos);
+            if (conHorarios) query = _context.Servicio.Include(s => s.Horarios);
 
+            var servicio = await query.FirstOrDefaultAsync(s => s.ServicioId == id);
             if (servicio == null) return NotFound();
 
             var servicioDTO = _mapper.Map<ServicioDTO>(servicio);
@@ -96,21 +95,21 @@ namespace ApiSpaDemo.Controllers
 
 
         // GET: api/Servicio/5
-        // Obtiene los servicios de un usuario en especifico, con o sin los Turnos.
-        [HttpGet("getServiciosEmpleado/{usuarioId}")]
+        // Obtiene los servicios de un empleado en especifico, con o sin los Turnos y con o sin los Horarios.
+        [HttpGet("getServiciosEmpleado/{empleadoId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ServicioDTO>> GetServicioEmpleado(string usuarioId, bool conTurnos)
+        public async Task<ActionResult<ServicioDTO>> GetServicioEmpleado(string empleadoId, bool conTurnos, bool conHorarios)
         {
-            if (string.IsNullOrWhiteSpace(usuarioId))
+            if (string.IsNullOrWhiteSpace(empleadoId))
             {
                 return BadRequest("No se especifico un ID de usuario.");
             }
 
-            IQueryable<Servicio> query = _context.Servicio.Where(s => s.UsuarioId == usuarioId);
+            IQueryable<Servicio> query = _context.Servicio.Where(s => s.UsuarioId == empleadoId);
 
-            if (conTurnos) 
-                query = _context.Servicio.Include(s => s.Turnos);
+            if (conTurnos) query = _context.Servicio.Include(s => s.Turnos);
+            if (conHorarios) query = _context.Servicio.Include(s => s.Horarios);
             
             var servicios = await query.ToListAsync();
 
