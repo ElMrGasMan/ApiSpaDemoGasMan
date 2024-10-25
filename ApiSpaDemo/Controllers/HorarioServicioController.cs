@@ -151,7 +151,7 @@ namespace ApiSpaDemo.Controllers
             {
                 return BadRequest($"No se encontro el horario con el ID {horarioId}.");
             }
-            if (horarioServicio.Servicio != null)
+            if (horarioServicio.ServicioClass != null)
             {
                 return BadRequest($"Este horario de ID: {horarioId}, ya está asignado a otro servicio.");
             }
@@ -193,7 +193,7 @@ namespace ApiSpaDemo.Controllers
             {
                 return BadRequest($"No se encontro el horario con el ID {horarioId}.");
             }
-            if (horarioServicio.Servicio == null)
+            if (horarioServicio.ServicioClass == null)
             {
                 return BadRequest($"El horario con ID: {horarioId}, no esta asignado a ningun servicio.");
             }

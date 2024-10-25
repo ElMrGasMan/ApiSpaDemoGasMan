@@ -10,8 +10,8 @@ namespace ApiSpaDemo.Models.DTO
         public int? ServicioId { get; set; }
 
         [DataType(DataType.Time)]
-        public TimeOnly FechaInicio { get; set; }
+        public TimeSpan HoraInicio { get; set; }
         [DataType(DataType.Time)]
-        public TimeOnly FechaFinal { get; set; }
+        public TimeSpan HoraFinal { get; set; }
     }
 }

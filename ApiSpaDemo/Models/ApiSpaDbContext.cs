@@ -70,6 +70,22 @@ public partial class ApiSpaDbContext : IdentityDbContext<Usuario, IdentityRole, 
 
         // CASCADAS DE USUARIO===========================================
 
+        // Conversor para TimeOnly
+        modelBuilder.Entity<HorarioServicio>()
+            .Property(h => h.HoraInicio)
+            .HasConversion(
+                v => v.ToTimeSpan(), // De TimeOnly a TimeSpan
+                v => TimeOnly.FromTimeSpan(v) // De TimeSpan a TimeOnly
+            );
+
+        modelBuilder.Entity<HorarioServicio>()
+            .Property(h => h.HoraFinal)
+            .HasConversion(
+                v => v.ToTimeSpan(), // De TimeOnly a TimeSpan
+                v => TimeOnly.FromTimeSpan(v) // De TimeSpan a TimeOnly
+            );
+        //===============================================
+
         modelBuilder.Entity<ChatPrivado>()
             .HasMany(c => c.Mensajes)
             .WithOne(m => m.ChatPrivado)

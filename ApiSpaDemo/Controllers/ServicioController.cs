@@ -32,11 +32,17 @@ namespace ApiSpaDemo.Controllers
         // Obtiene todos los servicios
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<ServicioDTO>>> GetServicio()
+        public async Task<ActionResult<IEnumerable<ServicioDTO>>> GetServicio(bool conTurnos, bool conHorarios)
         {
-            var servicio = await _context.Servicio.ToListAsync();
-            var servicioDTO = _mapper.Map<List<ServicioDTO>>(servicio);
-            return servicioDTO;
+            IQueryable<Servicio> query = _context.Servicio;
+
+            if (conTurnos) query = _context.Servicio.Include(s => s.Turnos);
+            if (conHorarios) query = _context.Servicio.Include(s => s.Horarios);
+
+            var servicios = await query.ToListAsync();
+            var serviciosDTO = _mapper.Map<List<ServicioDTO>>(servicios);
+
+            return serviciosDTO;
         }
 
         // GET: api/Servicio/tipo/{tipo}
@@ -52,7 +58,7 @@ namespace ApiSpaDemo.Controllers
                 return BadRequest("No se especificó ningun tipo.");
             }
 
-            var query = _context.Servicio.Where(s => s.TipoServicio == tipo);
+            IQueryable<Servicio> query = _context.Servicio.Where(s => s.TipoServicio == tipo);
 
             if (conTurnos) query = _context.Servicio.Include(s => s.Turnos);
             if (conHorarios) query = _context.Servicio.Include(s => s.Horarios);

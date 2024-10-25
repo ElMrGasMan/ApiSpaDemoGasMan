@@ -10,6 +10,7 @@ namespace ApiSpaDemo.Models.DTO
         public string? UsuarioId { get; set; }
 
         public ICollection<TurnoDTO> Turnos { get; set; } = [];
+        public ICollection<HorarioServicioDTO> Horarios { get; set; } = [];
 
         [Required]
         [MaxLength(50, ErrorMessage="El nombre del tipo no puede exceder 50 caracteres.")]

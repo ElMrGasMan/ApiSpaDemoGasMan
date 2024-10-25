@@ -10,7 +10,7 @@ namespace ApiSpaDemo.Models
 
         public int? ServicioId { get; set; }
         [ForeignKey("ServicioId")]
-        public Servicio? Servicio { get; set; }
+        public Servicio? ServicioClass { get; set; }
 
         [DataType(DataType.Time)]
         public TimeOnly HoraInicio { get; set; }
