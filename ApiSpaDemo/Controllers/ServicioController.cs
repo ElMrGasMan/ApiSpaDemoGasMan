@@ -36,8 +36,8 @@ namespace ApiSpaDemo.Controllers
         {
             IQueryable<Servicio> query = _context.Servicio;
 
-            if (conTurnos) query = _context.Servicio.Include(s => s.Turnos);
-            if (conHorarios) query = _context.Servicio.Include(s => s.Horarios);
+            if (conTurnos) query = query.Include(s => s.Turnos);
+            if (conHorarios) query = query.Include(s => s.Horarios);
 
             var servicios = await query.ToListAsync();
             var serviciosDTO = _mapper.Map<List<ServicioDTO>>(servicios);
@@ -60,8 +60,8 @@ namespace ApiSpaDemo.Controllers
 
             IQueryable<Servicio> query = _context.Servicio.Where(s => s.TipoServicio == tipo);
 
-            if (conTurnos) query = _context.Servicio.Include(s => s.Turnos);
-            if (conHorarios) query = _context.Servicio.Include(s => s.Horarios);
+            if (conTurnos) query = query.Include(s => s.Turnos);
+            if (conHorarios) query = query.Include(s => s.Horarios);
 
             var servicios = await query.ToListAsync();
 
@@ -89,8 +89,8 @@ namespace ApiSpaDemo.Controllers
 
             IQueryable<Servicio> query = _context.Servicio.Where(s => s.ServicioId == id);
 
-            if (conTurnos) query = _context.Servicio.Include(s => s.Turnos);
-            if (conHorarios) query = _context.Servicio.Include(s => s.Horarios);
+            if (conTurnos) query = query.Include(s => s.Turnos);
+            if (conHorarios) query = query.Include(s => s.Horarios);
 
             var servicio = await query.FirstOrDefaultAsync(s => s.ServicioId == id);
             if (servicio == null) return NotFound();
@@ -114,8 +114,8 @@ namespace ApiSpaDemo.Controllers
 
             IQueryable<Servicio> query = _context.Servicio.Where(s => s.UsuarioId == empleadoId);
 
-            if (conTurnos) query = _context.Servicio.Include(s => s.Turnos);
-            if (conHorarios) query = _context.Servicio.Include(s => s.Horarios);
+            if (conTurnos) query = query.Include(s => s.Turnos);
+            if (conHorarios) query = query.Include(s => s.Horarios);
             
             var servicios = await query.ToListAsync();
 
