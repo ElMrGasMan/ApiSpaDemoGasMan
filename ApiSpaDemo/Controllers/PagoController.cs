@@ -160,6 +160,34 @@ namespace ApiSpaDemo.Controllers
         }
 
 
+        // PATCH: api/Pago/5
+        // Establece el Metodo o Formato de Pago.
+        [HttpPatch("establecerMetodoPago/{metodoPago}, {id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<PagoDTO>>> EstablecerMetodoPago(string metodoPago, int id)
+        {
+            Pago? pago = await _context.Pago.FindAsync(id);
+            if (pago == null) return NotFound($"El Pago con ID: {id}, no fue encontrado.");
+
+            if (pago.Pagado == true) return BadRequest($"Este Pago con ID: {id}, ya fue pagado anteriormente.");
+
+            pago.FormatoPago = metodoPago;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error al actualizar el pago: {ex.Message}");
+            }
+
+            return Ok($"El estado del pago con ID: {id}, se ha indicado como pagado.");
+        }
+
+
         // DELETE: api/Pago/5
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
