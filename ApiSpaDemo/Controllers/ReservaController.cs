@@ -410,6 +410,38 @@ namespace ApiSpaDemo.Controllers
         }
 
 
+        // PATCH: api/Reserva
+        // Elimina un turno de la Reserva
+        [HttpPatch("cambioNombreIdentificador/{idReserva}, {nuevoNombre}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> EliminarTurnoAReserva(int idReserva, string nuevoNombre)
+        {
+            Reserva? reserva = await _context.Reserva.FindAsync(idReserva);
+
+            if (reserva == null)
+            {
+                return NotFound($"No se encontró una reserva con el ID {idReserva}.");
+            }
+
+            reserva.NombreIdentificador = nuevoNombre;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error al actualizar la reserva: {ex.Message}");
+            }
+
+            return Ok($"El nombre indetificador de la reserva con ID: {idReserva}, se cambió a: {nuevoNombre}.");
+        }
+
+
+
+
         // PUT: api/Reserva
         // Toma un Turno de una Reserva y se la pasa a otra Reserva
         [HttpPut("cambiarTurnoDeReserva/{idTurno}")]

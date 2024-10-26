@@ -164,6 +164,7 @@ namespace ApiSpaDemo.Controllers
         // Establece el Metodo o Formato de Pago.
         [HttpPatch("establecerMetodoPago/{metodoPago}, {id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<PagoDTO>>> EstablecerMetodoPago(string metodoPago, int id)
@@ -184,7 +185,7 @@ namespace ApiSpaDemo.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Error al actualizar el pago: {ex.Message}");
             }
 
-            return Ok($"El estado del pago con ID: {id}, se ha indicado como pagado.");
+            return Ok($"El formato del pago con ID: {id}, se ha indicado como: {metodoPago}.");
         }
 
 
