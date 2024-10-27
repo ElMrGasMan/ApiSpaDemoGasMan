@@ -32,9 +32,9 @@ namespace ApiSpaDemo.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<RegistroClientePorDia>>> GetListadoClientesPorDia(DateOnly dia, bool ordenarDescendiente)
         {
-            // Traer solo los turnos que sean del dia especificado
+            // Traer solo los turnos que sean del dia especificado y estén pagados
             var query = _context.Turno
-                .Where(t => DateOnly.FromDateTime(t.FechaInicio) == dia && t.ReservaClass != null && t.ServicioClass != null)
+                .Where(t => DateOnly.FromDateTime(t.FechaInicio) == dia && t.ReservaClass != null && t.ServicioClass != null && t.ReservaClass.Pago.Pagado == true)
                 .Select(t => new RegistroClientePorDia
                 {
                     ClienteId = t.ReservaClass.ClienteId,
@@ -57,9 +57,10 @@ namespace ApiSpaDemo.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<RegistroClientePorEmpleado>>> GetListadoClientesPorEmpleado(bool ordenarDescendiente)
         {
-            // Traer todos los turnos, mas todas las cosas necesarias
+            // Traer todos los turnos pagados, mas todas las cosas necesarias.
+            // Ademas no traer los turnos que sean anteriores al dia de hoy.
             var query = _context.Turno
-                .Where(t => t.ReservaClass != null && t.ServicioClass != null && t.ServicioClass.UsuarioClass != null)
+                .Where(t => t.ReservaClass != null && t.ServicioClass != null && t.ServicioClass.UsuarioClass != null && t.ReservaClass.Pago.Pagado == true && t.FechaInicio >= DateTime.Now)
                 .Select(t => new RegistroClientePorEmpleado
                 {
                     ClienteId = t.ReservaClass.ClienteId,
