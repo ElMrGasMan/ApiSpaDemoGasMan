@@ -75,7 +75,7 @@ namespace ApiSpaDemo.Controllers
 
             List<HorarioServicio> horariosServicio = servicio.Horarios.ToList();
 
-            var horariosEmpleadoDTO = _mapper.Map<HorarioServicioDTO>(horariosServicio);
+            var horariosEmpleadoDTO = _mapper.Map<List<HorarioServicioDTO>>(horariosServicio);
             return Ok(horariosEmpleadoDTO);
         }
 
