@@ -190,14 +190,14 @@ namespace ApiSpaDemo.Controllers
         [EnableCors("PermitirTodo")]
         [HttpPost("cambiarContraseña")]
         [Authorize]
-        public async Task<IActionResult> CambiarContrasenia([FromBody] CambiarContraDTO model)
+        public async Task<IActionResult> CambiarContrasenia([FromBody] CambiarContraDTO model, string idUser)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var user = await _userManager.GetUserAsync(User);
+            var user = await _userManager.FindByIdAsync(idUser);
             if (user == null)
             {
                 return Unauthorized("El usuario no se encuentra autenticado.");
