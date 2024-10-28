@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ApiSpaDemo.Controllers
 {
+    [EnableCors("PermitirTodo")]
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
