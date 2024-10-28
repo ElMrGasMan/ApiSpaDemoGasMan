@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Cors;
 
 namespace ApiSpaDemo.Services
 {
-    [EnableCors("ReglasCors")]
+    [EnableCors("PermitirTodo")]
     public class EmailService
     {
         private readonly SMTPSettingsModel _smtpSettingsModel;
