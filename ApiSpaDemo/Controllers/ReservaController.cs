@@ -160,6 +160,49 @@ namespace ApiSpaDemo.Controllers
         }
 
 
+        // GET: api/Reserva/5
+        // Obtiene todas las reservas de un cierto cliente
+        [HttpGet("reservUserAllNoPagados")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<ReservaDTO>>> GetReservaUsuarioNoPagado(string clienteId, bool conTurnos, bool conPago)
+        {
+            List<Reserva> reservas = new();
+            if (conTurnos && conPago)
+            {
+                reservas = await _context.Reserva
+                .Where(pag => pag.ClienteId == clienteId)
+                .Include(p => p.Turnos)
+                .Include(p => p.Pago)
+                .Where(r => r.Pago.Pagado == false)
+                .ToListAsync();
+            }
+            else if (conTurnos)
+            {
+                reservas = await _context.Reserva
+                .Where(pag => pag.ClienteId == clienteId)
+                .Include(p => p.Turnos)
+                .ToListAsync();
+            }
+            else if (conPago)
+            {
+                reservas = await _context.Reserva
+                .Where(pag => pag.ClienteId == clienteId)
+                .Include(p => p.Pago)
+                .Where(r => r.Pago.Pagado == false)
+                .ToListAsync();
+            }
+            else
+            {
+                reservas = await _context.Reserva
+                .Where(pag => pag.ClienteId == clienteId)
+                .ToListAsync();
+            }
+
+            var reservasDTO = _mapper.Map<List<ReservaDTO>>(reservas);
+            return Ok(reservasDTO);
+        }
+
+
         // GET: api/Reserva
         // Obtiene todas las reservas del cliente autenticado
         [HttpGet("reservAuthUserAll")]
@@ -265,7 +308,7 @@ namespace ApiSpaDemo.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<ReservaSimpleDTO>> PostReserva(ReservaSimpleDTO reservaSimpleDTO, decimal monto, string formatoPago = "")
+        public async Task<ActionResult<ReservaSimpleDTO>> PostReserva(ReservaSimpleDTO reservaSimpleDTO, decimal monto, string userId, string formatoPago = "")
         {
             if (!ModelState.IsValid)
             {
@@ -276,14 +319,8 @@ namespace ApiSpaDemo.Controllers
                 formatoPago = "No elegido";
             }
 
-            var usuario = await _userManager.GetUserAsync(User);
-            if (usuario == null)
-            {
-                return Unauthorized();
-            }
-
             var reserva = _mapper.Map<Reserva>(reservaSimpleDTO);
-            reserva.ClienteId = usuario.Id;
+            reserva.ClienteId = userId;
 
             var pago = new Pago
             {
