@@ -161,7 +161,7 @@ namespace ApiSpaDemo.Controllers
 
 
         // GET: api/Reserva/5
-        // Obtiene todas las reservas de un cierto cliente
+        // Obtiene todas las reservas no pagadas de un cierto cliente
         [HttpGet("reservUserAllNoPagados")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<ReservaDTO>>> GetReservaUsuarioNoPagado(string clienteId, bool conTurnos, bool conPago)
@@ -319,13 +319,19 @@ namespace ApiSpaDemo.Controllers
                 formatoPago = "No elegido";
             }
 
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return BadRequest("Este usuario no está registrado.");
+            }
+
             var reserva = _mapper.Map<Reserva>(reservaSimpleDTO);
             reserva.ClienteId = userId;
 
             var pago = new Pago
             {
                 ReservaClass = reserva,
-                UsuarioClass = await _userManager.GetUserAsync(User),
+                UsuarioClass = user,
                 FormatoPago = formatoPago,
                 MontoTotal = monto
             };
