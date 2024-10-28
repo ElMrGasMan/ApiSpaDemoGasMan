@@ -413,6 +413,7 @@ namespace ApiSpaDemo.Controllers
         {
             Reserva? reserva = await _context.Reserva
                 .Include(r => r.Turnos) // Incluir los turnos 
+                .Include(r => r.Pago) // Incluir el pago
                 .FirstOrDefaultAsync(r => r.ReservaId == idReserva);
 
             if (reserva == null)
@@ -495,6 +496,7 @@ namespace ApiSpaDemo.Controllers
         {
             Reserva? reservaVieja = await _context.Reserva
                 .Include(r => r.Turnos)
+                .Include(r => r.Pago) // Incluir el pago
                 .FirstOrDefaultAsync(r => r.ReservaId == idReservaOriginal);
 
             if (reservaVieja == null)
@@ -504,6 +506,7 @@ namespace ApiSpaDemo.Controllers
 
             Reserva? reservaNueva = await _context.Reserva
                 .Include(r => r.Turnos)
+                .Include(r => r.Pago) // Incluir el pago
                 .FirstOrDefaultAsync(r => r.ReservaId == idReservaNueva);
 
             if (reservaNueva == null)
