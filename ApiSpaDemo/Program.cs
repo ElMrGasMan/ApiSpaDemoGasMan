@@ -24,7 +24,7 @@ namespace ApiSpaDemo
             {
                 opt.AddPolicy("PermitirTodo", builder =>
                 {
-                    builder.WithOrigins("http://localhost:5500", "http://127.0.0.1:5500", "http://www.ApiSpaDemo.somee.com", "https://spa-sentirse-bien-g2.netlify.app")
+                    builder.WithOrigins("http://localhost:5500", "http://127.0.0.1:5500", "http://www.ApiSpaDemo.somee.com", "https://spa-sentirse-bien-g2.netlify.app", "https://spa-sentirse-bien-mobile-g2.netlify.app")
                     .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
                 });
             });

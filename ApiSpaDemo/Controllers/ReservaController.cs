@@ -352,7 +352,7 @@ namespace ApiSpaDemo.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AgregarTurnoAReserva(int idReserva, int idTurno)
+        public async Task<IActionResult> AgregarTurnoAReserva(int idReserva, int idTurno, decimal descuento = 0)
         {
             var reserva = await _context.Reserva
                 .Include(r => r.Turnos) // Incluir los turnos 
@@ -388,7 +388,8 @@ namespace ApiSpaDemo.Controllers
 
             turno.ReservaId = idReserva;
             reserva.Turnos.Add(turno);
-            reserva.Pago.MontoTotal += servicio.Precio;
+            decimal precioConDescuento = servicio.Precio - (servicio.Precio * descuento) / 100;
+            reserva.Pago.MontoTotal += precioConDescuento;
 
             try
             {
